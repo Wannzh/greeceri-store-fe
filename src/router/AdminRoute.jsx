@@ -2,11 +2,19 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export default function AdminRoute({ children }) {
-  const { user } = useAuth();
+    const { user, loading } = useAuth();
 
-  if (!user || user.role !== "ADMIN") {
-    return <Navigate to="/" replace />;
-  }
+    if (loading) {
+        return (
+            <div className="w-full h-screen flex items-center justify-center">
+                <p>Checking authentication...</p>
+            </div>
+        )
+    }
 
-  return children;
+    if (!user || user.role !== "ADMIN") {
+        return <Navigate to="/forbidden" replace />
+    }
+
+    return children;
 }
