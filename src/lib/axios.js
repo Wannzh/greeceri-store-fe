@@ -7,10 +7,14 @@ const api = axios.create({
 
 // Auth Token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  try {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch (e) {
+    console.warn("Unable to read token from localStorage", e);
   }
 
   return config;
@@ -20,9 +24,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
-    if (err.response?.status == 401) {
-      console.log("Unauthorized");
+    if (err?.response?.status == 401) {
+      console.warn("API unauthorized (401). Token may be invalid/expired.");
     }
     return Promise.reject(err);
   }
 );
+
+export default api;

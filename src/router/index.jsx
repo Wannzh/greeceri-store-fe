@@ -10,6 +10,8 @@ import ProductListPage from "@/features/product/pages/ProductListPage";
 import ProductDetailPage from "@/features/product/pages/ProductDetailPage";
 import CartPage from "@/features/cart/pages/CartPage";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
+import AdminDashboard from "@/features/admin/pages/AdminDashboard";
 
 export default function AppRouter() {
     return (
@@ -35,6 +37,16 @@ export default function AppRouter() {
                         <ProtectedRoute>
                             <CartPage />
                         </ProtectedRoute>
+                    }
+                />
+
+                {/* Admin Page */}
+                <Route
+                    path="/admin"
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
                     }
                 />
 
