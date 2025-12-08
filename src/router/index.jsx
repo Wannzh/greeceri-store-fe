@@ -8,6 +8,8 @@ import LoginPage from "@/features/auth/pages/LoginPage";
 import RegisterPage from "@/features/auth/pages/RegisterPage";
 import ProductListPage from "@/features/product/pages/ProductListPage";
 import ProductDetailPage from "@/features/product/pages/ProductDetailPage";
+import CartPage from "@/features/cart/pages/CartPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
     return (
@@ -25,6 +27,16 @@ export default function AppRouter() {
                 {/* Product */}
                 <Route path="/products" element={<ProductListPage />} />
                 <Route path="/products/:id" element={<ProductDetailPage />} />
+
+                {/* Cart */}
+                <Route
+                    path="/cart"
+                    element={
+                        <ProtectedRoute>
+                            <CartPage />
+                        </ProtectedRoute>
+                    }
+                />
 
                 {/* Not Found */}
                 <Route path="*" element={<NotFound />} />
