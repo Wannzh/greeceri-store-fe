@@ -1,79 +1,103 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../lib/axios"; 
+import { useNavigate } from "react-router-dom";
+import api from "@/lib/axios";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("access_token");
-    const savedUser = localStorage.getItem("user");
+    const navigate = useNavigate();
 
-    if (savedToken) {
-      setToken(savedToken);
-    }
+    useEffect(() => {
+        const savedToken = localStorage.getItem("access_token");
+        const savedUser = localStorage.getItem("user");
 
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        console.error("Error parsing user:", e);
-      }
-    }
+        if (savedToken) {
+            setToken(savedToken);
+        }
 
-    setLoading(false);
-  }, []);
+        if (savedUser && savedUser !== "undefined") {
+            try {
+                setUser(JSON.parse(savedUser));
+            } catch (e) {
+                console.error("Error parsing user:", e);
+            }
+        }
 
-  // ---- LOGIN ----
-  const login = async (email, password) => {
-    try {
-      const res = await api.post("/auth/login", { email, password });
+        setLoading(false);
+    }, []);
 
-      const accessToken = res.data.accessToken;
-      const userData = res.data.user;
+    // LOGIN
+    const login = async (email, password) => {
+        try {
+            const res = await api.post("/auth/login", { email, password });
 
-      setUser(userData);
-      setToken(accessToken);
+            const data = res.data.data;
 
-      localStorage.setItem("access_token", accessToken);
-      localStorage.setItem("user", JSON.stringify(userData));
+            const accessToken = data.accessToken;
+            const refreshToken = data.refreshToken;
 
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.message || "Login gagal",
-      };
-    }
-  };
+            const userData = {
+                id: data.id,
+                name: data.name,
+                email: data.email,
+                role: data.role,
+            };
 
-  // ---- LOGOUT ----
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user");
-  };
+            setUser(userData);
+            setToken(accessToken);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        loading,
-        login,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+            localStorage.setItem("access_token", accessToken);
+            localStorage.setItem("refresh_token", refreshToken);
+            localStorage.setItem("user", JSON.stringify(userData))
+
+            // Redirect by role
+            if (userData.role === "ADMIN") {
+                navigate("/admin", { replace: true });
+            } else {
+                navigate("/", { replace: true });
+            }
+
+            return { success: true };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || "Login failed",
+            };
+        }
+    };
+
+    // LOGOUT
+    const logout = () => {
+        setUser(null);
+        setToken(null);
+        
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user");
+
+        navigate("/login", { replace: true });
+    };
+
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                token,
+                loading,
+                login,
+                logout,
+                isAuthenticated: !!user,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+    return useContext(AuthContext);
 }

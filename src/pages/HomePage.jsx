@@ -5,7 +5,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <button className="bg-amber-700" onClick={() => login("greeceri.store@gmail.com", "Greeceri@123")}>
+      <button className="bg-amber-700">
         TEST LOGIN
       </button>
 

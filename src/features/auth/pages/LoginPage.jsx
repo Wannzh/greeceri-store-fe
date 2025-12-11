@@ -41,11 +41,11 @@ export default function LoginPage() {
     }
 
     return (
-<div className="w-full min-h-screen grid lg:grid-cols-2">
+        <div className="w-full min-h-screen grid lg:grid-cols-2">
             {/* Bagian Kiri: Form Login */}
             <div className="flex items-center justify-center p-8 bg-background">
                 <div className="mx-auto w-full max-w-[400px] space-y-6">
-                    
+
                     {/* Header Logo & Judul */}
                     <div className="flex flex-col space-y-2 text-center">
                         <div className="flex justify-center mb-2">
@@ -70,7 +70,7 @@ export default function LoginPage() {
 
                     {/* Form */}
                     <form onSubmit={handleLogin} className="space-y-4">
-                        
+
                         {/* Input Email */}
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
@@ -142,23 +142,23 @@ export default function LoginPage() {
                             Daftar sekarang
                         </a>
                     </p>
-                    
+
                     <div className="mt-8 text-center text-xs text-muted-foreground/60">
-                         © {new Date().getFullYear()} Greeceri Store. All rights reserved.
+                        © {new Date().getFullYear()} Greeceri Store. All rights reserved.
                     </div>
                 </div>
             </div>
 
-            {/* Bagian Kanan: Gambar / Banner (Hanya muncul di Layar Besar) */}
+            {/* Bagian Kanan: Gambar / Banner */}
             <div className="hidden lg:block relative bg-muted">
-                {/* Gambar Background - Saya pakai Unsplash source random tema grocery/supermarket */}
+                {/* Gambar Background */}
                 <div className="absolute inset-0">
-                     <img 
-                        src="https://plus.unsplash.com/premium_photo-1683984171269-04c84ee23234?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-                        alt="Greeceri Background" 
+                    <img
+                        src="https://plus.unsplash.com/premium_photo-1683984171269-04c84ee23234?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        alt="Greeceri Background"
                         className="h-full w-full object-cover"
                     />
-                    {/* Overlay Gelap agar tulisan terbaca */}
+                    {/* Overlay Gelap */}
                     <div className="absolute inset-0 bg-zinc-900/60 mix-blend-multiply" />
                     {/* Overlay Gradient Halus */}
                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/40 to-transparent" />
