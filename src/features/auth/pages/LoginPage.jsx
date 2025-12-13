@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Mail, Lock, Eye, EyeOff, Loader2, ShoppingBag } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export default function LoginPage() {
     const { login } = useAuth()
@@ -49,15 +50,15 @@ export default function LoginPage() {
                     {/* Header Logo & Judul */}
                     <div className="flex flex-col space-y-2 text-center">
                         <div className="flex justify-center mb-2">
-                            <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                            <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
                                 <ShoppingBag size={24} />
                             </div>
                         </div>
                         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                            Selamat Datang
+                            Selamat Datang Kembali!
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Masukan kredensial Anda untuk mengakses Greeceri Store
+                            Masuk untuk lanjut belanja kebutuhan harianmu yang segar.
                         </p>
                     </div>
 
@@ -92,9 +93,10 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Password</Label>
-                                <a href="#" className="text-xs text-primary hover:underline font-medium">
+                                <Link to="/forgot-password" className="text-xs text-primary hover:underline font-medium">
                                     Lupa password?
-                                </a>
+                                </Link>
+
                             </div>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -133,6 +135,24 @@ export default function LoginPage() {
                                 "Masuk ke Akun"
                             )}
                         </Button>
+
+                        <div className="relative my-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-background px-2 text-muted-foreground">
+                                    Atau masuk dengan
+                                </span>
+                            </div>
+                        </div>
+
+                        <Button variant="outline" type="button" className="w-full h-11" onClick={() => alert("Fitur Google Login")}>
+                            <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                                <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
+                            </svg>
+                            Google
+                        </Button>
                     </form>
 
                     {/* Footer Kecil */}
@@ -151,11 +171,11 @@ export default function LoginPage() {
 
             {/* Bagian Kanan: Gambar / Banner */}
             <div className="hidden lg:block relative bg-muted">
-                {/* Gambar Background */}
                 <div className="absolute inset-0">
+                    {/* Gambar Background */}
                     <img
-                        src="https://plus.unsplash.com/premium_photo-1683984171269-04c84ee23234?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        alt="Greeceri Background"
+                        src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2574&auto=format&fit=crop"
+                        alt="Fresh Groceries"
                         className="h-full w-full object-cover"
                     />
                     {/* Overlay Gelap */}
@@ -166,15 +186,12 @@ export default function LoginPage() {
 
                 <div className="relative z-20 flex h-full flex-col justify-end p-10 text-white">
                     <div className="mb-6">
-                        <ShoppingBag size={48} className="mb-4 text-primary-foreground/90" />
-                        <blockquote className="space-y-2">
-                            <p className="text-lg font-medium leading-relaxed">
-                                &ldquo;Greeceri Store membantu kami mengelola inventaris toko dengan lebih efisien. Sistem yang cepat, modern, dan sangat mudah digunakan.&rdquo;
-                            </p>
-                            <footer className="text-sm font-semibold opacity-80">
-                                Ama — Store Manager
-                            </footer>
-                        </blockquote>
+                        <p className="text-3xl font-bold leading-tight mb-4">
+                            "Sayuran segar, langsung diantar ke depan pintu rumah Anda."
+                        </p>
+                        <p className="text-green-100 text-lg">
+                            Nikmati promo gratis ongkir untuk pengguna baru hari ini.
+                        </p>
                     </div>
                 </div>
             </div>

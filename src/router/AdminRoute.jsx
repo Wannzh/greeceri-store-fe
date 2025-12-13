@@ -13,7 +13,7 @@ export default function AdminRoute({ children }) {
     }
 
     if (!user || user.role !== "ADMIN") {
-        return <Navigate to="/forbidden" replace />
+        return <Navigate to="/" replace />
     }
 
     return children;
