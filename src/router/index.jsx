@@ -18,6 +18,9 @@ import AdminDashboard from "@/features/admin/pages/AdminDashboard";
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/features/auth/pages/ResetPasswordPage";
 
+import CheckoutPage from "@/features/checkout/pages/CheckoutPage";
+import PaymentResultPage from "@/features/checkout/pages/PaymentResultPage";
+
 export default function AppRouter() {
     return (
         <Routes>
@@ -41,6 +44,36 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <CartPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/checkout"
+                    element={
+                        <ProtectedRoute>
+                            <CheckoutPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route path="/payment-success" element={<PaymentResultPage status="success" />} />
+                <Route path="/payment-failure" element={<PaymentResultPage status="failure" />} />
+
+                <Route
+                    path="/orders/my"
+                    element={
+                        <ProtectedRoute>
+                            <OrderHistoryPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/orders/:orderId"
+                    element={
+                        <ProtectedRoute>
+                            <OrderDetailPage />
                         </ProtectedRoute>
                     }
                 />

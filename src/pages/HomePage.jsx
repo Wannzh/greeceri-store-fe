@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/axios"; // Gunakan axios instance kita
 import ProductCard from "@/features/product/components/ProductCard";
 
-// --- KOMPONEN HERO SECTION ---
+// --- HERO SECTION ---
 function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-green-50 pt-16 pb-20 lg:pt-32 lg:pb-28">
@@ -42,10 +42,9 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Hero Image / Illustration */}
+          {/* Hero Image */}
           <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
             <div className="relative rounded-2xl bg-gradient-to-tr from-green-200 to-emerald-100 p-8 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-               {/* Placeholder Image - Ganti dengan foto sayuran asli nanti */}
                <img 
                  src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop" 
                  alt="Sayuran Segar" 
@@ -68,7 +67,7 @@ function HeroSection() {
   );
 }
 
-// --- KOMPONEN FEATURE SECTION ---
+// --- FEATURE SECTION ---
 function FeatureSection() {
   const features = [
     {
@@ -113,7 +112,7 @@ function FeatureSection() {
   );
 }
 
-// --- KOMPONEN FEATURED PRODUCTS ---
+// --- FEATURED PRODUCTS ---
 function FeaturedProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -121,10 +120,8 @@ function FeaturedProducts() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        // Menggunakan instance api kita
         const res = await api.get("/products");
         if (res.data.success) {
-          // Ambil 4 produk pertama saja
           setProducts(res.data.data.slice(0, 4));
         }
       } catch (err) {
@@ -161,7 +158,7 @@ function FeaturedProducts() {
                   <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
                 </div>
               ))
-            : // Real Products
+            :
               products.map((p) => <ProductCard key={p.id} product={p} />)}
         </div>
         

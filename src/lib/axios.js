@@ -18,7 +18,6 @@ function onRefreshed(token) {
 }
 
 api.interceptors.request.use((config) => {
-  // Gunakan key "access_token"
   const token = localStorage.getItem("access_token");
   
   if (token) {
@@ -35,7 +34,6 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      // Gunakan key "refresh_token"
       const refreshToken = localStorage.getItem("refresh_token");
 
       if (!refreshToken) {
@@ -56,7 +54,6 @@ api.interceptors.response.use(
           const newAccess = res.data.data.accessToken;
           const newRefresh = res.data.data.refreshToken;
 
-          // PERBAIKAN: Simpan dengan key yang konsisten
           localStorage.setItem("access_token", newAccess);
           if (newRefresh) {
              localStorage.setItem("refresh_token", newRefresh);
@@ -85,11 +82,10 @@ api.interceptors.response.use(
 );
 
 function handleLogout() {
-  // PERBAIKAN: Hapus key yang benar saat logout
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("user");
-  window.location.href = "/login"; // Lebih baik ke login daripada home
+  window.location.href = "/login";
 }
 
 export default api;

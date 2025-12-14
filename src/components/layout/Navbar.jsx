@@ -18,7 +18,6 @@ export default function Navbar() {
   const { cart } = useCart();
   const navigate = useNavigate();
 
-  // Helper untuk styling link aktif
   const navLinkClass = ({ isActive }) =>
     isActive
       ? "text-primary font-bold text-sm transition-colors"
@@ -33,16 +32,15 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         
-        {/* --- 1. LOGO --- */}
+        {/* --- LOGO --- */}
         <Link to="/" className="flex items-center gap-2">
-          {/* Anda bisa ganti dengan <img> logo Anda */}
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white font-bold text-lg">
             G
           </div>
           <span className="text-xl font-bold text-gray-900 tracking-tight">Greeceri</span>
         </Link>
 
-        {/* --- 2. DESKTOP NAVIGATION --- */}
+        {/* --- DESKTOP NAVIGATION --- */}
         <nav className="hidden md:flex items-center gap-8">
           <NavLink to="/" className={navLinkClass}>
             Beranda
@@ -50,7 +48,7 @@ export default function Navbar() {
           <NavLink to="/products" className={navLinkClass}>
             Produk
           </NavLink>
-          {/* Menu Admin (Hanya jika role ADMIN) */}
+          {/* Menu Admin */}
           {isAuthenticated && user?.role === "ADMIN" && (
             <NavLink to="/admin" className={navLinkClass}>
               Dashboard Admin
@@ -58,10 +56,10 @@ export default function Navbar() {
           )}
         </nav>
 
-        {/* --- 3. ACTIONS (Cart & User) --- */}
+        {/* --- ACTIONS (Cart & User) --- */}
         <div className="flex items-center gap-4">
           
-          {/* KERANJANG BELANJA (Hanya User/Guest) */}
+          {/* KERANJANG BELANJA */}
           {user?.role !== "ADMIN" && (
             <Link to="/cart" className="relative group">
               <Button variant="ghost" size="icon" className="relative hover:bg-gray-100">
@@ -137,7 +135,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* --- 4. MOBILE MENU (HAMBURGER) --- */}
+          {/* --- MOBILE MENU (HAMBURGER) --- */}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden text-gray-600">
