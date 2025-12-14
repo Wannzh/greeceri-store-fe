@@ -5,11 +5,9 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Flag supaya tidak loop refresh terus
 let isRefreshing = false;
 let refreshSubscribers = [];
 
-// Fungsi push request yang nunggu refresh
 function subscribeTokenRefresh(cb) {
   refreshSubscribers.push(cb);
 }
@@ -20,31 +18,28 @@ function onRefreshed(token) {
 }
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-
+  // Gunakan key "access_token"
+  const token = localStorage.getItem("access_token");
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 
-// Auth Token
 api.interceptors.response.use(
   (response) => response,
-
   async (error) => {
     const originalRequest = error.config;
 
-    // Kalau token expired → 401
-    if (error?.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refreshToken = localStorage.getItem("refreshToken");
+      // Gunakan key "refresh_token"
+      const refreshToken = localStorage.getItem("refresh_token");
 
-      // Kalau tidak ada refreshToken → logout user
       if (!refreshToken) {
-        console.warn("No refresh token found → Need login");
+        handleLogout();
         return Promise.reject(error);
       }
 
@@ -53,27 +48,30 @@ api.interceptors.response.use(
 
         try {
           const res = await axios.post(
-            `${import.meta.env.VITE_API_URL}/auth/refresh`,
+            `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
             { refreshToken }
           );
 
+          // Ambil token baru dari response BE
           const newAccess = res.data.data.accessToken;
           const newRefresh = res.data.data.refreshToken;
 
-          // Simpan token baru
-          localStorage.setItem("accessToken", newAccess);
-          localStorage.setItem("refreshToken", newRefresh);
+          // PERBAIKAN: Simpan dengan key yang konsisten
+          localStorage.setItem("access_token", newAccess);
+          if (newRefresh) {
+             localStorage.setItem("refresh_token", newRefresh);
+          }
 
           isRefreshing = false;
-
           onRefreshed(newAccess);
+          
         } catch (refreshErr) {
           isRefreshing = false;
+          handleLogout();
           return Promise.reject(refreshErr);
         }
       }
 
-      // Return promise untuk request yang sedang menunggu refresh
       return new Promise((resolve) => {
         subscribeTokenRefresh((newToken) => {
           originalRequest.headers.Authorization = "Bearer " + newToken;
@@ -85,5 +83,13 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+function handleLogout() {
+  // PERBAIKAN: Hapus key yang benar saat logout
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("user");
+  window.location.href = "/login"; // Lebih baik ke login daripada home
+}
 
 export default api;

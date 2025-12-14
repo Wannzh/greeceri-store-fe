@@ -23,18 +23,19 @@ export default function AppRouter() {
         <Routes>
             {/* Layout global */}
             <Route element={<AppLayout />}>
+                {/* Homepage */}
                 <Route
                     path="/"
                     element={
-                        <ProtectedRoute>
-                            <HomePage />
-                        </ProtectedRoute>
+                        <HomePage />
                     }
                 />
 
+                {/* Product */}
                 <Route path="/products" element={<ProductListPage />} />
                 <Route path="/products/:id" element={<ProductDetailPage />} />
 
+                {/* Cart */}
                 <Route
                     path="/cart"
                     element={
@@ -43,23 +44,24 @@ export default function AppRouter() {
                         </ProtectedRoute>
                     }
                 />
+
+                {/* Admin */}
+                <Route
+                    path="/admin"
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    }
+                />
             </Route>
+
 
             {/* Auth */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-            {/* Admin */}
-            <Route
-                path="/admin"
-                element={
-                    <AdminRoute>
-                        <AdminDashboard />
-                    </AdminRoute>
-                }
-            />
 
             {/* Not Found */}
             <Route path="*" element={<NotFound />} />
