@@ -29,6 +29,9 @@ export default function CheckoutPage() {
     0
   );
 
+  const SERVICE_FEE = 1000;
+
+  const grandTotal = totalAmount + SERVICE_FEE;
   // Load Alamat saat halaman dibuka
   useEffect(() => {
     if (selectedItemsIds.length === 0) {
@@ -146,22 +149,29 @@ export default function CheckoutPage() {
           <div className="bg-white p-6 shadow-sm sticky top-24 space-y-4">
             <h2 className="font-semibold text-lg">Ringkasan Belanja</h2>
             
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Total Harga ({itemsToCheckout.length} barang)</span>
-              <span>Rp {totalAmount.toLocaleString("id-ID")}</span>
-            </div>
-            
-            {/* Ongkir (Contoh Hardcode dulu, nanti bisa dinamis) */}
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Ongkos Kirim</span>
-              <span className="text-green-600 font-medium">Gratis</span>
-            </div>
+            <div className="space-y-3">
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Total Harga ({itemsToCheckout.length} barang)</span>
+                  <span>Rp {totalAmount.toLocaleString("id-ID")}</span>
+                </div>
+                
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Ongkos Kirim</span>
+                  <span className="text-green-600 font-medium">Gratis</span>
+                </div>
+
+                {/* Menampilkan Biaya Layanan agar sesuai dengan Backend */}
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Biaya Layanan</span>
+                  <span>Rp {SERVICE_FEE.toLocaleString("id-ID")}</span>
+                </div>
+              </div>
 
             <hr />
 
             <div className="flex justify-between font-bold text-lg text-primary">
               <span>Total Tagihan</span>
-              <span>Rp {totalAmount.toLocaleString("id-ID")}</span>
+              <span>Rp {grandTotal.toLocaleString("id-ID")}</span>
             </div>
 
             <Button

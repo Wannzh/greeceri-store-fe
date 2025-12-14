@@ -21,6 +21,9 @@ import ResetPasswordPage from "@/features/auth/pages/ResetPasswordPage";
 import CheckoutPage from "@/features/checkout/pages/CheckoutPage";
 import PaymentResultPage from "@/features/checkout/pages/PaymentResultPage";
 
+import OrderHistoryPage from "@/features/orders/pages/OrderHistoryPage";
+import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
+
 export default function AppRouter() {
     return (
         <Routes>
