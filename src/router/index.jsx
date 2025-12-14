@@ -23,6 +23,8 @@ import PaymentResultPage from "@/features/checkout/pages/PaymentResultPage";
 
 import OrderHistoryPage from "@/features/orders/pages/OrderHistoryPage";
 import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
+import ProfilePage from "@/features/user/pages/ProfilePage";
+import EditProfilePage from "@/features/user/pages/EditPage";
 
 export default function AppRouter() {
     return (
@@ -80,6 +82,12 @@ export default function AppRouter() {
                         </ProtectedRoute>
                     }
                 />
+
+                {/* User Profile */}
+                <Route path="/user/profile" element={<ProfilePage />} />
+                <Route path="/user/profile/edit" element={<EditProfilePage />} />
+
+
 
                 {/* Admin */}
                 <Route
