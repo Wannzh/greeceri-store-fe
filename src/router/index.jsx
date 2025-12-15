@@ -25,6 +25,9 @@ import OrderHistoryPage from "@/features/orders/pages/OrderHistoryPage";
 import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
 import ProfilePage from "@/features/user/pages/ProfilePage";
 import EditProfilePage from "@/features/user/pages/EditPage";
+import AddressListPage from "@/features/user/pages/AddressListPage";
+import AddAddressPage from "@/features/user/pages/AddAddressPage";
+import EditAddressPage from "@/features/user/pages/EditAddressPage";
 
 export default function AppRouter() {
     return (
@@ -86,7 +89,9 @@ export default function AppRouter() {
                 {/* User Profile */}
                 <Route path="/user/profile" element={<ProfilePage />} />
                 <Route path="/user/profile/edit" element={<EditProfilePage />} />
-
+                <Route path="/user/addresses" element={<AddressListPage />} />
+                <Route path="/user/addresses/new" element={<AddAddressPage />} />
+                <Route path="/user/addresses/:addressId/edit" element={<EditAddressPage />} />
 
 
                 {/* Admin */}
