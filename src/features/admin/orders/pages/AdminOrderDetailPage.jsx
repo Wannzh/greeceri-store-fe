@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { STATUS_FLOW, STATUS_LABEL } from "../constants";
+import OrderStatusBadge from "@/components/OrderStatusBadge";
+import OrderStatusTimeline from "../components/OrderStatusTimeline";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import toast from "react-hot-toast";
 
@@ -73,8 +75,7 @@ export default function AdminOrderDetailPage() {
         );
     }
 
-    const isFinal =
-        order?.status === "DELIVERED" || order?.status === "CANCELLED";
+    const isFinal = order?.status === "DELIVERED" || order?.status === "CANCELLED";
 
     return (
         <div className="space-y-6 max-w-3xl">
@@ -110,6 +111,11 @@ export default function AdminOrderDetailPage() {
                 </p>
             </div>
 
+            <div className="bg-white rounded-xl p-6 border shadow-sm">
+                <p className="font-semibold mb-3">Status Timeline</p>
+                <OrderStatusTimeline currentStatus={order?.status} />
+            </div>
+
             <div className="bg-white rounded-xl p-6 border shadow-sm space-y-4">
                 <p className="font-semibold">Update Status Order</p>
 
@@ -118,7 +124,10 @@ export default function AdminOrderDetailPage() {
                         <AlertDescription>{error}</AlertDescription>
                     </Alert>
                 ) : isFinal ? (
-                    <p className="text-sm text-gray-500">Status ini sudah final dan tidak dapat diubah.</p>
+                    <div>
+                        <OrderStatusBadge status={order?.status} className="mb-2" />
+                        <p className="text-sm text-gray-500">This order status is final and cannot be changed</p>
+                    </div>
                 ) : (
                     <>
                         <Select
@@ -154,7 +163,7 @@ export default function AdminOrderDetailPage() {
                                 </Button>
                             }
                             title="Konfirmasi Ubah Status"
-                            description={`Ubah status dari "${STATUS_LABEL[order?.status] || order?.status}" menjadi "${STATUS_LABEL[status] || status}"?`}
+                            description={`Are you sure you want to change order status to ${STATUS_LABEL[status] || status}?`}
                             confirmText="Ubah"
                             loading={saving}
                             onConfirm={handleUpdateStatus}
