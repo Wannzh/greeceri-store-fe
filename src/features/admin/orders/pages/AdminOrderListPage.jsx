@@ -2,15 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminOrderService } from "@/services/adminOrderService";
 import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { exportObjectsToCsv } from "@/lib/csv";
-import {
-    Select,
-    SelectTrigger,
-    SelectValue,
-    SelectContent,
-    SelectItem,
-} from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { STATUS_OPTIONS, STATUS_LABEL } from "../constants";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
@@ -65,6 +60,27 @@ export default function AdminOrderListPage() {
             return id.includes(q) || user.includes(q);
         });
     }, [orders, debouncedSearch]);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
+    useEffect(() => {
+        // reset to first page when filters change
+        setPage(1);
+    }, [filteredOrders, pageSize]);
+
+    const totalPages = Math.max(1, Math.ceil((filteredOrders?.length || 0) / pageSize));
+
+    useEffect(() => {
+        // clamp page within range
+        if (page > totalPages) setPage(totalPages);
+    }, [page, totalPages]);
+
+    const paginatedOrders = useMemo(() => {
+        const start = (page - 1) * pageSize;
+        return (filteredOrders || []).slice(start, start + pageSize);
+    }, [filteredOrders, page, pageSize]);
 
     const exportOrdersToCSV = (rows) => {
         if (!rows || rows.length === 0) return;
@@ -201,7 +217,7 @@ export default function AdminOrderListPage() {
                         </thead>
 
                         <tbody>
-                            {filteredOrders.map((order) => (
+                            {paginatedOrders.map((order) => (
                                 <tr key={order.id} className="border-t hover:bg-gray-50 cursor-pointer" onClick={() => window.location.assign(`/admin/orders/${order.id}`)}>
                                     <td className="p-4 font-medium">
                                         {highlightText((order.id || "").slice(0, 8) + "...", debouncedSearch)}
@@ -237,6 +253,38 @@ export default function AdminOrderListPage() {
                         </tbody>
 
                     </table>
+
+                    {/* Pagination controls */}
+                    <div className="flex items-center justify-between px-4 py-3 border-t">
+                        <div className="text-sm text-gray-600">
+                            Menampilkan <span className="font-medium">{(filteredOrders.length ? (page - 1) * pageSize + 1 : 0)}</span> - <span className="font-medium">{Math.min(page * pageSize, filteredOrders.length)}</span> dari <span className="font-medium">{filteredOrders.length}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+                                <SelectTrigger className="w-28">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {[10, 25, 50].map((s) => (
+                                        <SelectItem key={s} value={String(s)}>{s} / page</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <div className="flex items-center gap-1">
+                                <Button size="icon" variant="ghost" aria-label="Previous page" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                                    <ChevronLeft className="h-4 w-4" />
+                                </Button>
+
+                                <span className="text-sm px-2">Page <span className="font-medium">{page}</span> / {totalPages}</span>
+
+                                <Button size="icon" variant="ghost" aria-label="Next page" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
