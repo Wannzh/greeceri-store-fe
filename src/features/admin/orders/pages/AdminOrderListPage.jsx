@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminOrderService } from "@/services/adminOrderService";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { exportObjectsToCsv } from "@/lib/csv";
 import {
     Select,
     SelectTrigger,
@@ -20,52 +22,122 @@ import { Eye } from "lucide-react";
 export default function AdminOrderListPage() {
     const [orders, setOrders] = useState([]);
     const [status, setStatus] = useState("ALL");
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        loadOrders();
+        const load = async () => {
+            try {
+                setLoading(true);
+                setError("");
+
+                const data =
+                    status === "ALL"
+                        ? await adminOrderService.getAllOrders()
+                        : await adminOrderService.getOrdersByStatus(status);
+
+                setOrders(data || []);
+            } catch (err) {
+                console.error("Gagal load orders", err);
+                setError(err.message || "Gagal memuat daftar order");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        load();
     }, [status]);
 
-    const loadOrders = async () => {
-        try {
-            setLoading(true);
-            setError("");
+    // quick debounce for search input (300ms)
+    useEffect(() => {
+        const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+        return () => clearTimeout(t);
+    }, [search]);
 
-            const data =
-                status === "ALL"
-                    ? await adminOrderService.getAllOrders()
-                    : await adminOrderService.getOrdersByStatus(status);
+    const filteredOrders = useMemo(() => {
+        const q = (debouncedSearch || "").toLowerCase();
+        if (!q) return orders;
+        return orders.filter((o) => {
+            const id = (o.id || "").toLowerCase();
+            const user = (o.userName || "").toLowerCase();
+            return id.includes(q) || user.includes(q);
+        });
+    }, [orders, debouncedSearch]);
 
-            setOrders(data || []);
-        } catch (err) {
-            console.error("Gagal load orders", err);
-            setError(err.message || "Gagal memuat daftar order");
-        } finally {
-            setLoading(false);
-        }
+    const exportOrdersToCSV = (rows) => {
+        if (!rows || rows.length === 0) return;
+        // Prepare rows with columns expected by CSV util
+        const prepared = rows.map((r) => ({
+            "Order ID": r.id,
+            User: r.userName,
+            Total: Number(r.totalPrice || 0),
+            Status: r.status,
+            Date: r.createdAt ? new Date(r.createdAt).toLocaleString("id-ID") : "",
+        }));
+        // columns must match header order
+        const columns = ["Order ID", "User", "Total", "Status", "Date"];
+        exportObjectsToCsv(prepared, columns, `orders-${new Date().toISOString()}.csv`);
     };
 
+    function escapeRegex(str = "") {
+        return str.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+    }
+
+    function highlightText(text = "", query = "") {
+        try {
+            if (!query) return text;
+            const re = new RegExp(`(${escapeRegex(query)})`, "ig");
+            const parts = String(text).split(re);
+            return parts.map((p, i) =>
+                re.test(p) ? (
+                    <mark key={i} className="bg-yellow-100 text-yellow-800 px-0.5 rounded">{p}</mark>
+                ) : (
+                    <span key={i}>{p}</span>
+                )
+            );
+        } catch {
+            return text;
+        }
+    }
 
     return (
         <div className="space-y-6">
 
             {/* HEADER */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
                 <h1 className="text-2xl font-bold">Manajemen Order</h1>
 
-                <Select value={status} onValueChange={setStatus}>
-                    <SelectTrigger className="w-56">
-                        <SelectValue placeholder="Filter Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {STATUS_OPTIONS.map((s) => (
-                            <SelectItem key={s} value={s}>
-                                {s === "ALL" ? "Semua Status" : STATUS_LABEL[s]}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <div className="flex items-center gap-3">
+                    <Input
+                        placeholder="Search by ID or user..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="w-64"
+                    />
+
+                    <Select value={status} onValueChange={setStatus}>
+                        <SelectTrigger className="w-56">
+                            <SelectValue placeholder="Filter Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {STATUS_OPTIONS.map((s) => (
+                                <SelectItem key={s} value={s}>
+                                    {s === "ALL" ? "Semua Status" : STATUS_LABEL[s]}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Button
+                        onClick={() => exportOrdersToCSV(filteredOrders)}
+                        disabled={!filteredOrders || filteredOrders.length === 0}
+                        title={filteredOrders.length === 0 ? "No data to export" : "Export CSV of filtered orders"}
+                    >
+                        Export CSV
+                    </Button>
+                </div>
             </div>
 
             {/* TABLE */}
@@ -102,7 +174,7 @@ export default function AdminOrderListPage() {
                         <AlertDescription>{error}</AlertDescription>
                     </Alert>
                 </div>
-            ) : orders.length === 0 ? (
+            ) : filteredOrders.length === 0 ? (
                 <div className="bg-white rounded-xl p-10 text-center text-gray-500">
                     <div className="flex flex-col items-center gap-3">
                         <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
@@ -110,8 +182,8 @@ export default function AdminOrderListPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h4l3 8 4-16 3 8h4" />
                             </svg>
                         </div>
-                        <div className="text-lg font-medium">No orders found for this status</div>
-                        <div className="text-sm text-gray-500">Try selecting a different status or check back later.</div>
+                        <div className="text-lg font-medium">No orders match your search / filter</div>
+                        <div className="text-sm text-gray-500">Try a different search term or status.</div>
                     </div>
                 </div>
             ) : (
@@ -129,14 +201,14 @@ export default function AdminOrderListPage() {
                         </thead>
 
                         <tbody>
-                            {orders.map((order) => (
+                            {filteredOrders.map((order) => (
                                 <tr key={order.id} className="border-t hover:bg-gray-50 cursor-pointer" onClick={() => window.location.assign(`/admin/orders/${order.id}`)}>
                                     <td className="p-4 font-medium">
-                                        {(order.id || "").slice(0, 8)}...
+                                        {highlightText((order.id || "").slice(0, 8) + "...", debouncedSearch)}
                                     </td>
 
                                     <td className="p-4 text-center">
-                                        {order.userName}
+                                        {highlightText(order.userName, debouncedSearch)}
                                     </td>
 
                                     <td className="p-4 text-center">
