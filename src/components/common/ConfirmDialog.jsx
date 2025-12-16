@@ -43,7 +43,7 @@ export default function ConfirmDialog({
             onClick={onConfirm}
             className="bg-red-600 hover:bg-red-700"
           >
-            {loading ? "Menghapus..." : confirmText}
+            {loading ? `${confirmText}...` : confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

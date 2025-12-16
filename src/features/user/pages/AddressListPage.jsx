@@ -4,6 +4,7 @@ import { addressService } from "@/services/addressService";
 import { Button } from "@/components/ui/button";
 import { MapPin, Plus, Trash2, Star } from "lucide-react";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import toast from "react-hot-toast";
 
 
 export default function AddressListPage() {
@@ -33,7 +34,7 @@ export default function AddressListPage() {
             await loadAddresses(); // refresh list
         } catch (err) {
             console.error("Gagal hapus alamat", err);
-            alert("Gagal menghapus alamat");
+            toast.error("Gagal menghapus alamat");
         } finally {
             setLoadingId(null);
         }

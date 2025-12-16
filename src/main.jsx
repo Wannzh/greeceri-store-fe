@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./router/index.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from './context/CartContext';
+import { Toaster } from 'react-hot-toast';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -13,6 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <AuthProvider>
         <CartProvider>
           <AppRouter />
+          <Toaster position="top-right" />
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>

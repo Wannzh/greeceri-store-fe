@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import toast from "react-hot-toast";
 import { Save, ArrowLeft } from "lucide-react";
 
 export default function EditProfilePage() {
@@ -64,11 +65,11 @@ export default function EditProfilePage() {
         dateOfBirth: form.dateOfBirth,
       });
 
-      alert("Profil berhasil diperbarui");
+      toast.success("Profil berhasil diperbarui");
       navigate("/user/profile");
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Gagal memperbarui profil");
+      toast.error(err.response?.data?.message || "Gagal memperbarui profil");
     } finally {
       setSaving(false);
     }

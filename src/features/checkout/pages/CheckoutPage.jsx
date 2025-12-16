@@ -5,6 +5,7 @@ import { addressService } from "@/services/addressService";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
   const { cart, fetchCart } = useCart(); 
@@ -60,7 +61,7 @@ export default function CheckoutPage() {
   // Handle Checkout
   const handleCheckout = async () => {
     if (!selectedAddressId) {
-      alert("Mohon pilih alamat pengiriman terlebih dahulu.");
+      toast.error("Mohon pilih alamat pengiriman terlebih dahulu.");
       return;
     }
 
@@ -81,13 +82,13 @@ export default function CheckoutPage() {
         
         fetchCart(); 
       } else {
-        alert("Gagal mendapatkan link pembayaran.");
+        toast.error("Gagal mendapatkan link pembayaran.");
       }
 
     } catch (err) {
       console.error(err);
       const msg = err.response?.data?.message || "Checkout gagal";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
