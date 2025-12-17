@@ -46,6 +46,8 @@ import AdminCategoryListPage from "@/features/admin/pages/AdminCategoryListPage"
 import AdminCategoryFormPage from "@/features/admin/pages/AdminCategoryFormPage";
 import AdminOrderListPage from "@/features/admin/orders/pages/AdminOrderListPage";
 import AdminOrderDetailPage from "@/features/admin/orders/pages/AdminOrderDetailPage";
+import AdminUserListPage from "@/features/admin/users/pages/AdminUserListPage";
+import AdminUserDetailPage from "@/features/admin/users/pages/AdminUserDetailPage";
 
 export default function AppRouter() {
     return (
@@ -184,6 +186,10 @@ export default function AppRouter() {
                         </AdminRoute>
                     }
                 />
+
+                {/* Users */}
+                <Route path="users" element={<AdminUserListPage />} />
+                <Route path="users/:userId" element={<AdminUserDetailPage />} />
 
             </Route>
 

@@ -4,6 +4,7 @@ import {
   Package,
   Tags,
   ShoppingCart,
+  Users,
 } from "lucide-react";
 
 const menu = [
@@ -27,6 +28,11 @@ const menu = [
     icon: ShoppingCart,
     path: "/admin/orders",
   },
+  {
+    label: "Users",
+    icon: Users,
+    path: "/admin/users",
+  },
 ];
 
 export default function AdminSidebar() {
@@ -47,11 +53,10 @@ export default function AdminSidebar() {
             end
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition
-               ${
-                 isActive
-                   ? "bg-primary text-white"
-                   : "text-gray-600 hover:bg-gray-100"
-               }`
+               ${isActive
+                ? "bg-primary text-white"
+                : "text-gray-600 hover:bg-gray-100"
+              }`
             }
           >
             <item.icon className="h-4 w-4" />
