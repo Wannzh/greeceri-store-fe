@@ -96,8 +96,7 @@ export default function AdminCategoryListPage() {
             </thead>
             <tbody>
               {categories.map((cat) => {
-                const productCount = cat.products?.length || 0;
-
+                const productCount = cat.productCount ?? 0;
                 return (
                   <tr key={cat.id} className="border-t hover:bg-gray-50">
                     <td className="p-4 font-medium">{cat.name}</td>
