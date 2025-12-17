@@ -48,7 +48,7 @@ export default function AdminProductFormPage() {
 
   const loadProduct = async () => {
     try {
-      const data = await productService.getProductById(productId);
+      const data = await productService.getById(productId);
       setForm({
         name: data.name,
         description: data.description,

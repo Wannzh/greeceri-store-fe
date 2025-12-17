@@ -19,8 +19,6 @@ export const adminOrderService = {
       params.keyword = keyword.trim();
     }
 
-    console.log("Request params:", params); // Debug log
-    
     const res = await api.get("/admin/orders", { params });
     return res.data.data;
   },

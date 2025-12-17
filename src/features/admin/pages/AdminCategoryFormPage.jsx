@@ -28,7 +28,6 @@ export default function AdminCategoryFormPage() {
   const loadCategory = async () => {
     try {
       const data = await categoryService.getCategoryById(categoryId);
-      console.log("Category data:", data);
 
       if (!data) {
         throw new Error("Category not found");

@@ -11,16 +11,10 @@ export const productService = {
     return res.data.data;
   },
 
-  // Alias for backward compatibility
-  getProductById: async (id) => {
-    const res = await api.get(`/products/${id}`);
-    return res.data.data;
-  },
-
   // Admin: Get products with pagination and search
   getAdminProducts: async ({ page = 1, size = 10, keyword }) => {
     const params = {
-      page: Math.max(page - 1, 0), // FE 1-based → BE 0-based
+      page: Math.max(page - 1, 0),
       size,
     };
 
@@ -42,7 +36,7 @@ export const productService = {
         "Content-Type": "multipart/form-data",
       },
     });
-    return res.data.data; // { url: "https://..." }
+    return res.data.data;
   },
 
   createProduct: async (payload) => {
