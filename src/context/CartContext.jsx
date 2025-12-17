@@ -12,18 +12,18 @@ const emptyCart = {
 };
 
 export function CartProvider({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [cart, setCart] = useState(emptyCart);
   const [loading, setLoading] = useState(false);
 
-  // Load cart saat user login
+  // Load cart saat user login (skip for admin)
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.role !== "ADMIN") {
       fetchCart();
     } else {
       setCart(emptyCart);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   const fetchCart = async () => {
     try {

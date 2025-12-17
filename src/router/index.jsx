@@ -7,10 +7,12 @@ import AdminLayout from "@/components/layout/AdminLayout";
 /* Guards */
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
+import UserOnlyRoute from "./UserOnlyRoute";
 
 /* Public Pages */
 import HomePage from "@/pages/HomePage";
 import NotFound from "@/pages/NotFound";
+import AccessDenied from "@/pages/AccessDenied";
 
 /* Auth */
 import LoginPage from "@/features/auth/pages/LoginPage";
@@ -54,8 +56,14 @@ export default function AppRouter() {
     return (
         <Routes>
 
-            {/* USER / PUBLIC */}
-            <Route element={<AppLayout />}>
+            {/* USER / PUBLIC - blocked for ADMIN users */}
+            <Route
+                element={
+                    <UserOnlyRoute>
+                        <AppLayout />
+                    </UserOnlyRoute>
+                }
+            >
 
                 <Route path="/" element={<HomePage />} />
 
@@ -202,6 +210,9 @@ export default function AppRouter() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+            {/* ACCESS DENIED */}
+            <Route path="/access-denied" element={<AccessDenied />} />
 
             {/* NOT FOUND */}
             <Route path="*" element={<NotFound />} />
