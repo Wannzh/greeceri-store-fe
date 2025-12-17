@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { adminOrderService } from "@/services/adminOrderService";
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,12 @@ import OrderStatusBadge from "@/components/OrderStatusBadge";
 import OrderStatusTimeline from "../components/OrderStatusTimeline";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import toast from "react-hot-toast";
+import { Printer, ArrowLeft } from "lucide-react";
 
 export default function AdminOrderDetailPage() {
     const { orderId } = useParams();
     const navigate = useNavigate();
+    const invoiceRef = useRef(null);
 
     const [order, setOrder] = useState(null);
     const [status, setStatus] = useState("");
@@ -44,7 +46,6 @@ export default function AdminOrderDetailPage() {
             setStatus(data.status || "");
         } catch (err) {
             setError(err.message || "Order tidak ditemukan");
-            // navigate back after short delay so user can read the error
             setTimeout(() => navigate("/admin/orders"), 1300);
         } finally {
             setLoading(false);
@@ -66,6 +67,112 @@ export default function AdminOrderDetailPage() {
         }
     };
 
+    const handlePrintInvoice = () => {
+        const printWindow = window.open("", "_blank");
+        if (!printWindow) {
+            toast.error("Popup diblokir. Izinkan popup untuk print invoice.");
+            return;
+        }
+
+        const invoiceHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Invoice - ${order?.id}</title>
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+                    .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+                    .header h1 { font-size: 24px; margin-bottom: 5px; }
+                    .header p { color: #666; }
+                    .info-section { display: flex; justify-content: space-between; margin-bottom: 30px; }
+                    .info-box { width: 48%; }
+                    .info-box h3 { font-size: 14px; color: #666; margin-bottom: 8px; text-transform: uppercase; }
+                    .info-box p { margin-bottom: 4px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                    th { background-color: #f5f5f5; font-weight: bold; }
+                    .text-right { text-align: right; }
+                    .text-center { text-align: center; }
+                    .total-row { font-weight: bold; font-size: 16px; background-color: #f9f9f9; }
+                    .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; }
+                    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+                    .status-PENDING { background: #fef3c7; color: #92400e; }
+                    .status-PAID { background: #dbeafe; color: #1e40af; }
+                    .status-SHIPPED { background: #e0e7ff; color: #3730a3; }
+                    .status-DELIVERED { background: #d1fae5; color: #065f46; }
+                    .status-CANCELLED { background: #fee2e2; color: #991b1b; }
+                    @media print {
+                        body { padding: 20px; }
+                        .no-print { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>INVOICE</h1>
+                    <p>Greeceri Store</p>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-box">
+                        <h3>Detail Order</h3>
+                        <p><strong>Order ID:</strong> ${order?.id}</p>
+                        <p><strong>Tanggal:</strong> ${order?.createdAt ? new Date(order.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "-"}</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-${order?.status}">${STATUS_LABEL[order?.status] || order?.status}</span></p>
+                    </div>
+                    <div class="info-box">
+                        <h3>Alamat Pengiriman</h3>
+                        <p><strong>${order?.shippingAddress?.receiverName || "-"}</strong></p>
+                        <p>${order?.shippingAddress?.phoneNumber || "-"}</p>
+                        <p>${order?.shippingAddress?.fullAddress || "-"}</p>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-right">Harga</th>
+                            <th class="text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${(order?.items || []).map(item => `
+                            <tr>
+                                <td>${item.productName}</td>
+                                <td class="text-center">${item.quantity}</td>
+                                <td class="text-right">Rp ${(item.price || 0).toLocaleString("id-ID")}</td>
+                                <td class="text-right">Rp ${(item.subtotal || 0).toLocaleString("id-ID")}</td>
+                            </tr>
+                        `).join("")}
+                        <tr>
+                            <td colspan="3" class="text-right">Biaya Layanan</td>
+                            <td class="text-right">Rp 1.000</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3" class="text-right">Total</td>
+                            <td class="text-right">Rp ${(order?.totalPrice || 0).toLocaleString("id-ID")}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="footer">
+                    <p>Terima kasih telah berbelanja di Greeceri Store</p>
+                    <p style="margin-top: 8px; font-size: 12px;">Invoice ini dicetak pada ${new Date().toLocaleString("id-ID")}</p>
+                </div>
+
+                <script>
+                    window.onload = function() { window.print(); }
+                </script>
+            </body>
+            </html>
+        `;
+
+        printWindow.document.write(invoiceHtml);
+        printWindow.document.close();
+    };
 
     if (loading) {
         return (
@@ -80,7 +187,19 @@ export default function AdminOrderDetailPage() {
     return (
         <div className="space-y-6 max-w-3xl">
 
-            <h1 className="text-2xl font-bold">Detail Order</h1>
+            {/* Header with Back & Print */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <Button variant="ghost" size="icon" onClick={() => navigate("/admin/orders")}>
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                    <h1 className="text-2xl font-bold">Detail Order</h1>
+                </div>
+                <Button variant="outline" onClick={handlePrintInvoice}>
+                    <Printer className="h-4 w-4 mr-2" />
+                    Print Invoice
+                </Button>
+            </div>
 
             <div className="bg-white rounded-xl p-6 border shadow-sm space-y-3">
                 <p>

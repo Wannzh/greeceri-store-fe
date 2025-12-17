@@ -9,13 +9,21 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
-import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronLeft, ChevronRight, Eye, Download, FileSpreadsheet, FileText, ShoppingCart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { exportObjectsToCsv } from "@/lib/csv";
+import { exportObjectsToExcel } from "@/lib/excel";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { STATUS_OPTIONS, STATUS_LABEL } from "../constants";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 import { SkeletonText } from "@/components/ui/skeleton";
+import toast from "react-hot-toast";
 
 export default function AdminOrderListPage() {
     const navigate = useNavigate();
@@ -73,9 +81,9 @@ export default function AdminOrderListPage() {
     }, [page, size, status, debouncedSearch]);
 
     /* =========================
-       Export CSV (ALL filtered)
+       Export Functions
     ========================= */
-    const exportOrdersToCSV = async () => {
+    const getExportData = async () => {
         try {
             const res = await adminOrderService.getOrders({
                 page: 1,
@@ -84,9 +92,12 @@ export default function AdminOrderListPage() {
                 keyword: debouncedSearch || undefined,
             });
 
-            if (!res.content || res.content.length === 0) return;
+            if (!res.content || res.content.length === 0) {
+                toast.error("Tidak ada data untuk di-export");
+                return null;
+            }
 
-            const rows = res.content.map((r) => ({
+            return res.content.map((r) => ({
                 "Order ID": r.id,
                 User: r.userName,
                 Total: Number(r.totalPrice || 0),
@@ -95,14 +106,33 @@ export default function AdminOrderListPage() {
                     ? new Date(r.createdAt).toLocaleString("id-ID")
                     : "",
             }));
+        } catch {
+            toast.error("Gagal mengambil data");
+            return null;
+        }
+    };
 
+    const handleExportCSV = async () => {
+        const data = await getExportData();
+        if (data) {
             exportObjectsToCsv(
-                rows,
+                data,
                 ["Order ID", "User", "Total", "Status", "Date"],
                 `orders-${new Date().toISOString()}.csv`
             );
-        } catch {
-            alert("Gagal export CSV");
+            toast.success("Export CSV berhasil");
+        }
+    };
+
+    const handleExportExcel = async () => {
+        const data = await getExportData();
+        if (data) {
+            exportObjectsToExcel(
+                data,
+                ["Order ID", "User", "Total", "Status", "Date"],
+                `orders-${new Date().toISOString()}.xls`
+            );
+            toast.success("Export Excel berhasil");
         }
     };
 
@@ -111,11 +141,13 @@ export default function AdminOrderListPage() {
 
             {/* ================= HEADER ================= */}
             <div className="flex items-center justify-between gap-4">
-                <h1 className="text-2xl font-bold">Manajemen Order</h1>
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                    <ShoppingCart className="h-6 w-6" /> Manajemen Order
+                </h1>
 
                 <div className="flex items-center gap-3">
                     <Input
-                        placeholder="Cari ID atau user..."
+                        placeholder="Cari nama user..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-64"
@@ -134,12 +166,24 @@ export default function AdminOrderListPage() {
                         </SelectContent>
                     </Select>
 
-                    <Button
-                        onClick={exportOrdersToCSV}
-                        disabled={orders.length === 0}
-                    >
-                        Export CSV
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" disabled={orders.length === 0}>
+                                <Download className="h-4 w-4 mr-2" />
+                                Export
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={handleExportCSV}>
+                                <FileText className="h-4 w-4 mr-2" />
+                                Export CSV
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleExportExcel}>
+                                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                                Export Excel
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
 
