@@ -28,11 +28,18 @@ export default function AdminCategoryFormPage() {
   const loadCategory = async () => {
     try {
       const data = await categoryService.getCategoryById(categoryId);
+      console.log("Category data:", data);
+
+      if (!data) {
+        throw new Error("Category not found");
+      }
+
       setForm({
-        name: data.name,
+        name: data.name || "",
         description: data.description || "",
       });
     } catch (err) {
+      console.error("Error loading category:", err);
       toast.error("Kategori tidak ditemukan");
       navigate("/admin/categories");
     } finally {

@@ -1,7 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { adminDashboardService } from "@/services/adminDashboardService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { adminOrderService } from "@/services/adminOrderService";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import {
   PieChart,
   Pie,
@@ -21,6 +28,8 @@ import {
   Tags,
   ShoppingCart,
   DollarSign,
+  LayoutDashboard,
+  Calendar,
 } from "lucide-react";
 
 const DEFAULT_DASHBOARD = {
@@ -30,6 +39,14 @@ const DEFAULT_DASHBOARD = {
   recentOrders: [],
 };
 
+const DATE_RANGE_OPTIONS = [
+  { value: "7", label: "7 Hari Terakhir" },
+  { value: "30", label: "30 Hari Terakhir" },
+  { value: "90", label: "90 Hari Terakhir" },
+  { value: "365", label: "1 Tahun Terakhir" },
+  { value: "all", label: "Semua Waktu" },
+];
+
 export default function AdminDashboard() {
 
   const [data, setData] = useState(DEFAULT_DASHBOARD);
@@ -37,6 +54,7 @@ export default function AdminDashboard() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [dateRange, setDateRange] = useState("30"); // Default 30 days
 
 
   const loadDashboard = useCallback(async () => {
@@ -73,6 +91,32 @@ export default function AdminDashboard() {
     loadOrders();
   }, [loadOrders]);
 
+  // Filter orders based on date range
+  const filteredOrders = useMemo(() => {
+    if (dateRange === "all") return orders;
+
+    const days = parseInt(dateRange, 10);
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    return orders.filter((o) => {
+      const orderDate = new Date(o.createdAt);
+      return orderDate >= cutoffDate;
+    });
+  }, [orders, dateRange]);
+
+  // Calculate filtered stats
+  const filteredStats = useMemo(() => {
+    const totalOrders = filteredOrders.length;
+    const totalRevenue = filteredOrders
+      .filter((o) => ["PAID", "SHIPPED", "DELIVERED"].includes(o.status))
+      .reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
+    const paidOrders = filteredOrders.filter((o) => o.status === "PAID").length;
+    const cancelledOrders = filteredOrders.filter((o) => o.status === "CANCELLED").length;
+
+    return { totalOrders, totalRevenue, paidOrders, cancelledOrders };
+  }, [filteredOrders]);
+
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
@@ -84,36 +128,57 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
 
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+      {/* Header with Date Range Selector */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <LayoutDashboard className="h-6 w-6" /> Dashboard
+        </h1>
 
-        {dashboardError ? (
-          <div className="pt-3">
-            <Alert variant="destructive">
-              <AlertDescription>{dashboardError}</AlertDescription>
-            </Alert>
-          </div>
-        ) : null}
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-gray-500" />
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Pilih Periode" />
+            </SelectTrigger>
+            <SelectContent>
+              {DATE_RANGE_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-      {/* STATS */}
+      {dashboardError ? (
+        <div className="pt-3">
+          <Alert variant="destructive">
+            <AlertDescription>{dashboardError}</AlertDescription>
+          </Alert>
+        </div>
+      ) : null}
+
+      {/* STATS - Using filtered data */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Orders"
-          value={data.totalOrders}
+          value={filteredStats.totalOrders}
           icon={ShoppingCart}
         />
         <StatCard
           label="Total Revenue"
-          value={`Rp ${data.totalRevenue.toLocaleString("id-ID")}`}
+          value={`Rp ${filteredStats.totalRevenue.toLocaleString("id-ID")}`}
           icon={DollarSign}
         />
         <StatCard
           label="Paid Orders"
-          value={data.statusCount.PAID || 0}
+          value={filteredStats.paidOrders}
           icon={Package}
         />
         <StatCard
           label="Cancelled Orders"
-          value={data.statusCount.CANCELLED || 0}
+          value={filteredStats.cancelledOrders}
           icon={Tags}
         />
       </div>
@@ -134,10 +199,10 @@ export default function AdminDashboard() {
           <tbody>
             {data.recentOrders.map((o) => (
               <tr key={o.id} className="border-t">
-                <td className="p-2">{o.id}</td>
+                <td className="p-2">{o.id?.slice(0, 8)}...</td>
                 <td className="p-2 text-center">{o.userName}</td>
                 <td className="p-2 text-center">
-                  Rp {o.totalPrice.toLocaleString("id-ID")}
+                  Rp {(o.totalPrice || 0).toLocaleString("id-ID")}
                 </td>
                 <td className="p-2 text-center">{o.status}</td>
               </tr>
@@ -146,7 +211,7 @@ export default function AdminDashboard() {
         </table>
       </div>
 
-      {/* ANALYTICS */}
+      {/* ANALYTICS - Using filtered data */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Analytics</h2>
 
@@ -156,13 +221,13 @@ export default function AdminDashboard() {
             <div className="h-64">
               {loadingOrders ? (
                 <div className="flex h-full items-center justify-center">Loading chart...</div>
-              ) : orders.length === 0 ? (
+              ) : filteredOrders.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-gray-500">No order data</div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={getStatusChartData(orders)}
+                      data={getStatusChartData(filteredOrders)}
                       dataKey="value"
                       nameKey="name"
                       cx="50%"
@@ -170,7 +235,7 @@ export default function AdminDashboard() {
                       outerRadius={80}
                       label
                     >
-                      {getStatusChartData(orders).map((entry, index) => (
+                      {getStatusChartData(filteredOrders).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.status]} />
                       ))}
                     </Pie>
@@ -186,12 +251,12 @@ export default function AdminDashboard() {
             <div className="h-64">
               {loadingOrders ? (
                 <div className="flex h-full items-center justify-center">Loading chart...</div>
-              ) : orders.length === 0 ? (
+              ) : filteredOrders.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-gray-500">No revenue data</div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
-                    data={getRevenueChartData(orders)}
+                    data={getRevenueChartData(filteredOrders)}
                     margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
