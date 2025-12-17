@@ -10,4 +10,9 @@ export const userService = {
     const res = await api.put("/user/profile", payload);
     return res.data.data;
   },
+
+  changePassword: async (payload) => {
+    const res = await api.put("/user/password", payload);
+    return res.data;
+  },
 };

@@ -5,6 +5,7 @@ import {
   Tags,
   ShoppingCart,
   Users,
+  Settings,
 } from "lucide-react";
 
 const menu = [
@@ -32,6 +33,11 @@ const menu = [
     label: "Users",
     icon: Users,
     path: "/admin/users",
+  },
+  {
+    label: "Settings",
+    icon: Settings,
+    path: "/admin/settings",
   },
 ];
 
