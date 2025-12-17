@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { adminDashboardService } from "@/services/adminDashboardService";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { adminOrderService } from "@/services/adminOrderService";
 import {
   PieChart,
@@ -22,30 +23,36 @@ import {
   DollarSign,
 } from "lucide-react";
 
+const DEFAULT_DASHBOARD = {
+  totalOrders: 0,
+  totalRevenue: 0,
+  statusCount: {},
+  recentOrders: [],
+};
+
 export default function AdminDashboard() {
-  const [data, setData] = useState(null);
+
+  const [data, setData] = useState(DEFAULT_DASHBOARD);
+  const [dashboardError, setDashboardError] = useState("");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
-  const loadDashboard = async () => {
+  const loadDashboard = useCallback(async () => {
     try {
       const res = await adminDashboardService.getDashboard();
-      setData(res);
+      setData(res ?? DEFAULT_DASHBOARD);
+    } catch (err) {
+      console.error("Gagal load dashboard", err);
+      setDashboardError("Gagal memuat data dashboard");
+      setData(DEFAULT_DASHBOARD);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       setLoadingOrders(true);
       const res = await adminOrderService.getAllOrders();
@@ -56,7 +63,15 @@ export default function AdminDashboard() {
     } finally {
       setLoadingOrders(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
 
   if (loading) {
     return (
@@ -69,7 +84,15 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
 
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+
+        {dashboardError ? (
+          <div className="pt-3">
+            <Alert variant="destructive">
+              <AlertDescription>{dashboardError}</AlertDescription>
+            </Alert>
+          </div>
+        ) : null}
 
       {/* STATS */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
