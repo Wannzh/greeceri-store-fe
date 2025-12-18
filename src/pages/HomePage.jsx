@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { Truck, Leaf, ShieldCheck, ArrowRight, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import api from "@/lib/axios"; // Gunakan axios instance kita
+import api from "@/lib/axios";
 import ProductCard from "@/features/product/components/ProductCard";
+import { categoryService } from "@/services/categoryService";
 
 // --- HERO SECTION ---
 function HeroSection() {
@@ -12,21 +13,21 @@ function HeroSection() {
     <section className="relative overflow-hidden bg-green-50 pt-16 pb-20 lg:pt-32 lg:pb-28">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          
+
           {/* Text Content */}
           <div className="space-y-6 text-center lg:text-left">
             <div className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
               <span className="flex h-2 w-2 rounded-full bg-green-600 mr-2"></span>
               Segar Langsung dari Petani
             </div>
-            
+
             <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-              Belanja Sayur Segar <br /> 
+              Belanja Sayur Segar <br />
               <span className="text-primary">Lebih Cepat & Hemat</span>
             </h1>
-            
+
             <p className="mx-auto lg:mx-0 max-w-lg text-lg text-gray-600">
-              Greeceri Store menghubungkan Anda langsung dengan hasil panen terbaik. 
+              Greeceri Store menghubungkan Anda langsung dengan hasil panen terbaik.
               Kualitas terjamin, harga bersahabat, diantar sampai depan rumah.
             </p>
 
@@ -45,19 +46,19 @@ function HeroSection() {
           {/* Hero Image */}
           <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
             <div className="relative rounded-2xl bg-gradient-to-tr from-green-200 to-emerald-100 p-8 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-               <img 
-                 src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop" 
-                 alt="Sayuran Segar" 
-                 className="rounded-xl object-cover w-full h-[300px] md:h-[400px] shadow-sm"
-               />
+              <img
+                src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop"
+                alt="Sayuran Segar"
+                className="rounded-xl object-cover w-full h-[300px] md:h-[400px] shadow-sm"
+              />
             </div>
             {/* Dekorasi floating */}
             <div className="absolute -bottom-6 -left-6 hidden md:flex items-center gap-2 rounded-lg bg-white p-4 shadow-lg animate-bounce">
-                <Star className="text-yellow-400 fill-yellow-400 h-6 w-6" />
-                <div>
-                    <p className="text-sm font-bold">4.9/5 Rating</p>
-                    <p className="text-xs text-gray-500">Dari 10k+ Pelanggan</p>
-                </div>
+              <Star className="text-yellow-400 fill-yellow-400 h-6 w-6" />
+              <div>
+                <p className="text-sm font-bold">4.9/5 Rating</p>
+                <p className="text-xs text-gray-500">Dari 10k+ Pelanggan</p>
+              </div>
             </div>
           </div>
 
@@ -112,6 +113,98 @@ function FeatureSection() {
   );
 }
 
+// --- SHOP BY CATEGORY SECTION ---
+function CategorySection() {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Default category images
+  const categoryImages = {
+    "Sayuran": "https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=400&auto=format&fit=crop",
+    "Buah-buahan": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=400&auto=format&fit=crop",
+    "Daging": "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=400&auto=format&fit=crop",
+    "Ikan": "https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab?q=80&w=400&auto=format&fit=crop",
+    "Bumbu": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=400&auto=format&fit=crop",
+    "Minuman": "https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=400&auto=format&fit=crop",
+    "default": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400&auto=format&fit=crop",
+  };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryService.getAllCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Gagal memuat kategori", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const getCategoryImage = (name) => {
+    return categoryImages[name] || categoryImages["default"];
+  };
+
+  if (loading) {
+    return (
+      <section className="container mx-auto px-4 md:px-6 py-24">
+        <div className="text-center mb-12">
+          <div className="h-8 w-64 mx-auto bg-gray-200 rounded animate-pulse" />
+          <div className="h-4 w-96 mx-auto mt-4 bg-gray-200 rounded animate-pulse" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="aspect-square bg-gray-200 rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="container mx-auto px-4 md:px-6 py-24">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
+          Belanja Berdasarkan Kategori
+        </h2>
+        <p className="mt-4 text-lg text-gray-500">
+          Jelajahi berbagai pilihan sayuran segar, buah-buahan, dan produk organik kami
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {categories.map((cat) => (
+          <Link
+            key={cat.id}
+            to={`/products?category=${cat.id}`}
+            className="group relative aspect-square rounded-2xl overflow-hidden"
+          >
+            {/* Background Image */}
+            <img
+              src={getCategoryImage(cat.name)}
+              alt={cat.name}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+              <h3 className="font-bold text-lg">{cat.name}</h3>
+              <p className="text-sm text-white/80">
+                {cat.productCount || 0}+ produk
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // --- FEATURED PRODUCTS ---
 function FeaturedProducts() {
   const [products, setProducts] = useState([]);
@@ -150,20 +243,18 @@ function FeaturedProducts() {
         {/* Grid Produk */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {loading
-            ? // Skeleton Loading
-              [...Array(4)].map((_, i) => (
-                <div key={i} className="space-y-3 rounded-lg bg-white p-4 shadow-sm">
-                  <div className="h-40 w-full animate-pulse rounded bg-gray-200" />
-                  <div className="h-4 w-2/3 animate-pulse rounded bg-gray-200" />
-                  <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
-                </div>
-              ))
-            :
-              products.map((p) => <ProductCard key={p.id} product={p} />)}
+            ? [...Array(4)].map((_, i) => (
+              <div key={i} className="space-y-3 rounded-lg bg-white p-4 shadow-sm">
+                <div className="h-40 w-full animate-pulse rounded bg-gray-200" />
+                <div className="h-4 w-2/3 animate-pulse rounded bg-gray-200" />
+                <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
+              </div>
+            ))
+            : products.map((p) => <ProductCard key={p.id} product={p} />)}
         </div>
-        
+
         {!loading && products.length === 0 && (
-            <p className="text-center text-gray-500 py-10">Belum ada produk unggulan.</p>
+          <p className="text-center text-gray-500 py-10">Belum ada produk unggulan.</p>
         )}
       </div>
     </section>
@@ -178,30 +269,30 @@ function CTASection() {
     <section className="relative overflow-hidden py-24">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-primary/90">
-         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
       </div>
 
       <div className="container relative mx-auto px-4 md:px-6 text-center text-white space-y-6">
         <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
-            {isAuthenticated ? "Stok Dapur Mulai Menipis?" : "Siap Hidup Lebih Sehat?"}
+          {isAuthenticated ? "Stok Dapur Mulai Menipis?" : "Siap Hidup Lebih Sehat?"}
         </h2>
         <p className="mx-auto max-w-2xl text-lg text-green-50 opacity-90">
-            {isAuthenticated 
-                ? "Jangan tunggu sampai habis. Pesan sekarang, kami antar besok pagi!"
-                : "Bergabunglah dengan ribuan pelanggan yang telah beralih ke gaya hidup sehat bersama Greeceri."
-            }
+          {isAuthenticated
+            ? "Jangan tunggu sampai habis. Pesan sekarang, kami antar besok pagi!"
+            : "Bergabunglah dengan ribuan pelanggan yang telah beralih ke gaya hidup sehat bersama Greeceri."
+          }
         </p>
 
         <div className="pt-4">
-            {isAuthenticated ? (
-                 <Button asChild size="lg" variant="secondary" className="h-14 px-8 text-lg font-bold text-primary">
-                    <Link to="/products">Belanja Sekarang</Link>
-                 </Button>
-            ) : (
-                <Button asChild size="lg" variant="secondary" className="h-14 px-8 text-lg font-bold text-primary">
-                    <Link to="/register">Daftar Akun Gratis</Link>
-                </Button>
-            )}
+          {isAuthenticated ? (
+            <Button asChild size="lg" variant="secondary" className="h-14 px-8 text-lg font-bold text-primary">
+              <Link to="/products">Belanja Sekarang</Link>
+            </Button>
+          ) : (
+            <Button asChild size="lg" variant="secondary" className="h-14 px-8 text-lg font-bold text-primary">
+              <Link to="/register">Daftar Akun Gratis</Link>
+            </Button>
+          )}
         </div>
       </div>
     </section>
@@ -213,6 +304,7 @@ export default function HomePage() {
     <div className="flex min-h-screen flex-col">
       <HeroSection />
       <FeatureSection />
+      <CategorySection />
       <FeaturedProducts />
       <CTASection />
     </div>
