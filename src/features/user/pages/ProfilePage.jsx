@@ -204,7 +204,7 @@ export default function ProfilePage() {
                                 <p className="text-sm text-gray-500">Kelola password dan keamanan akun</p>
                             </div>
                         </div>
-                        <Link to="/user/profile/edit">
+                        <Link to="/user/change-password">
                             <Button variant="outline" className="w-full">
                                 Ubah Password
                             </Button>

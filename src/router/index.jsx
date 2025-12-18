@@ -36,6 +36,7 @@ import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
 /* User */
 import ProfilePage from "@/features/user/pages/ProfilePage";
 import EditProfilePage from "@/features/user/pages/EditPage";
+import ChangePasswordPage from "@/features/user/pages/ChangePasswordPage";
 import AddressListPage from "@/features/user/pages/AddressListPage";
 import AddAddressPage from "@/features/user/pages/AddAddressPage";
 import EditAddressPage from "@/features/user/pages/EditAddressPage";
@@ -126,6 +127,14 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <EditProfilePage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/user/change-password"
+                    element={
+                        <ProtectedRoute>
+                            <ChangePasswordPage />
                         </ProtectedRoute>
                     }
                 />

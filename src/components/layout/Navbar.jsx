@@ -43,7 +43,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
               <MapPin className="h-3 w-3" />
-              Pengiriman ke seluruh Indonesia
+              Pengiriman ke seluruh Bandung
             </span>
           </div>
           <div className="flex items-center gap-4">
