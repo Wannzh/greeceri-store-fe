@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { ShoppingCart, LogOut, Menu, User, Package, ChevronDown, Search, MapPin, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { cart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation(); // Hook untuk cek halaman aktif
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
@@ -34,6 +35,9 @@ export default function Navbar() {
       navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+  // Cek apakah sedang di halaman produk
+  const isProductPage = location.pathname === "/products";
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
@@ -71,25 +75,29 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Search Bar - Desktop */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-8">
-            <div className="relative w-full">
-              <Input
-                type="text"
-                placeholder="Cari produk segar..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-4 pr-12 h-11 rounded-full border-2 border-gray-200 focus:border-primary bg-gray-50"
-              />
-              <Button
-                type="submit"
-                size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-            </div>
-          </form>
+          {/* Search Bar - Desktop (HIDDEN ON PRODUCT PAGE) */}
+          {!isProductPage ? (
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-8 animate-in fade-in zoom-in-95 duration-300">
+              <div className="relative w-full">
+                <Input
+                  type="text"
+                  placeholder="Cari produk segar..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-4 pr-12 h-11 rounded-full border-2 border-gray-200 focus:border-primary bg-gray-50 transition-all focus:bg-white"
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full shadow-sm"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="hidden md:flex flex-1"></div> // Spacer agar layout tidak bergeser
+          )}
 
           {/* Actions */}
           <div className="flex items-center gap-2 md:gap-4">
@@ -100,7 +108,7 @@ export default function Navbar() {
                 <Button variant="ghost" size="icon" className="relative hover:bg-gray-100 h-10 w-10">
                   <ShoppingCart className="h-5 w-5 text-gray-700 group-hover:text-primary transition-colors" />
                   {cart.items.length > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-in zoom-in">
                       {cart.items.length}
                     </span>
                   )}
@@ -122,8 +130,8 @@ export default function Navbar() {
               ) : (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center gap-2 pl-2 pr-3 rounded-full border hover:bg-gray-50 h-10">
-                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-bold text-sm">
+                    <Button variant="ghost" className="flex items-center gap-2 pl-2 pr-3 rounded-full border hover:bg-gray-50 h-10 transition-all">
+                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-bold text-sm shadow-sm">
                         {user?.name?.charAt(0).toUpperCase()}
                       </div>
                       <span className="text-sm font-medium text-gray-700 max-w-[100px] truncate">
@@ -189,21 +197,23 @@ export default function Navbar() {
                   </SheetTitle>
                 </SheetHeader>
 
-                {/* Mobile Search */}
-                <form onSubmit={handleSearch} className="mb-6">
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      placeholder="Cari produk..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-4 pr-10"
-                    />
-                    <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0">
-                      <Search className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </form>
+                {/* Mobile Search - Only show if NOT on product page */}
+                {!isProductPage && (
+                  <form onSubmit={handleSearch} className="mb-6">
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        placeholder="Cari produk..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-4 pr-10"
+                      />
+                      <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0">
+                        <Search className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </form>
+                )}
 
                 <div className="flex flex-col gap-6">
                   {/* Navigation */}

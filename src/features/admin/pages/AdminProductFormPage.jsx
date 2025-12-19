@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import toast from "react-hot-toast";
-import { Save, ArrowLeft, Loader2, Upload, X, ImageIcon } from "lucide-react";
+import { Save, ArrowLeft, Loader2, Upload, X, ImageIcon, PackagePlus } from "lucide-react";
 
 export default function AdminProductFormPage() {
   const { productId } = useParams();
@@ -48,14 +48,15 @@ export default function AdminProductFormPage() {
 
   const loadProduct = async () => {
     try {
-      const data = await productService.getById(productId);
+      // Use admin endpoint to get product with categoryId
+      const data = await productService.getAdminProductById(productId);
       setForm({
-        name: data.name,
-        description: data.description,
-        price: data.price,
-        stock: data.stock,
+        name: data.name || "",
+        description: data.description || "",
+        price: data.price || "",
+        stock: data.stock || "",
         imageUrl: data.imageUrl || "",
-        categoryId: String(data.category?.id || data.categoryId || ""),
+        categoryId: String(data.categoryId || ""),
       });
     } catch (err) {
       toast.error("Produk tidak ditemukan");
@@ -122,7 +123,7 @@ export default function AdminProductFormPage() {
 
       if (isEdit) {
         await productService.updateProduct(productId, payload);
-        toast.success("Produk berhasil diupdate");
+        toast.success("Produk berhasil diperbarui");
       } else {
         await productService.createProduct(payload);
         toast.success("Produk berhasil ditambahkan");
@@ -139,170 +140,221 @@ export default function AdminProductFormPage() {
   if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-gray-500 text-sm">Memuat data...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-xl">
+    <div className="space-y-6 max-w-4xl mx-auto">
 
       {/* HEADER */}
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-          <ArrowLeft />
+      <div className="flex items-center gap-4 border-b pb-4">
+        <Button variant="outline" size="icon" className="rounded-full h-10 w-10" onClick={() => navigate(-1)}>
+          <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">
-          {isEdit ? "Edit Produk" : "Tambah Produk"}
-        </h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            {isEdit ? "Edit Produk" : "Tambah Produk Baru"}
+          </h1>
+          <p className="text-sm text-gray-500">
+            {isEdit ? "Perbarui detail dan stok produk" : "Tambahkan item baru ke inventaris toko"}
+          </p>
+        </div>
       </div>
 
-      {/* FORM */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-xl border shadow-sm p-6 space-y-5"
-      >
-        {/* Image Upload */}
-        <div className="space-y-2">
-          <Label>Gambar Produk</Label>
+      {/* FORM WRAPPER */}
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {form.imageUrl ? (
-            <div className="relative inline-block">
-              <img
-                src={form.imageUrl}
-                alt="Preview"
-                className="h-40 w-40 object-cover rounded-lg border"
+        {/* LEFT COLUMN: Image & Meta */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <ImageIcon className="h-4 w-4 text-primary" /> Media Produk
+            </h3>
+
+            <div className="space-y-4">
+              {form.imageUrl ? (
+                <div className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-50">
+                  <img
+                    src={form.imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-contain"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleRemoveImage}
+                      className="gap-2"
+                    >
+                      <X className="h-4 w-4" /> Hapus
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition-all group"
+                >
+                  {uploading ? (
+                    <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                  ) : (
+                    <>
+                      <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-50 group-hover:text-primary transition-colors">
+                        <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">Upload Gambar</span>
+                      <span className="text-xs text-gray-500 mt-1">JPG, PNG, WebP (Max 5MB)</span>
+                    </>
+                  )}
+                </div>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageUpload}
+                className="hidden"
               />
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+
+              {form.imageUrl && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                >
+                  {uploading ? "Uploading..." : "Ganti Gambar"}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">Status & Kategori</h3>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Kategori <span className="text-red-500">*</span></Label>
+                <Select
+                  value={form.categoryId}
+                  onValueChange={(val) => handleChange("categoryId", val)}
+                >
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Pilih kategori" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={String(c.id)}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Details */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-6 md:p-8 space-y-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center">
+                  <PackagePlus size={20} />
+                </div>
+                <h3 className="font-semibold text-gray-900">Detail Informasi</h3>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="name">Nama Produk <span className="text-red-500">*</span></Label>
+                <Input
+                  id="name"
+                  value={form.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  required
+                  placeholder="Contoh: Apel Fuji Premium"
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Deskripsi</Label>
+                <Textarea
+                  id="description"
+                  value={form.description}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                  placeholder="Jelaskan detail produk..."
+                  className="min-h-[140px] resize-y"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Harga (Rp) <span className="text-red-500">*</span></Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">Rp</span>
+                    <Input
+                      id="price"
+                      type="number"
+                      value={form.price}
+                      onChange={(e) => handleChange("price", e.target.value)}
+                      required
+                      className="pl-9 h-11"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="stock">Stok Awal <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="stock"
+                    type="number"
+                    value={form.stock}
+                    onChange={(e) => handleChange("stock", e.target.value)}
+                    required
+                    className="h-11"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Action */}
+            <div className="bg-gray-50 px-6 py-4 border-t flex justify-end gap-3">
+              <Button variant="outline" type="button" onClick={() => navigate(-1)} disabled={saving}>
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                className="px-8 font-semibold"
+                disabled={saving || uploading}
               >
-                <X className="h-4 w-4" />
-              </button>
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Simpan Produk
+                  </>
+                )}
+              </Button>
             </div>
-          ) : (
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="h-40 w-40 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition"
-            >
-              {uploading ? (
-                <Loader2 className="h-8 w-8 text-primary animate-spin" />
-              ) : (
-                <>
-                  <ImageIcon className="h-10 w-10 text-gray-400 mb-2" />
-                  <span className="text-sm text-gray-500">Klik untuk upload</span>
-                </>
-              )}
-            </div>
-          )}
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
-
-          {form.imageUrl && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Ganti Gambar
-                </>
-              )}
-            </Button>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label>Nama Produk</Label>
-          <Input
-            value={form.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label>Deskripsi</Label>
-          <Textarea
-            value={form.description}
-            onChange={(e) => handleChange("description", e.target.value)}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Harga</Label>
-            <Input
-              type="number"
-              value={form.price}
-              onChange={(e) => handleChange("price", e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Stok</Label>
-            <Input
-              type="number"
-              value={form.stock}
-              onChange={(e) => handleChange("stock", e.target.value)}
-              required
-            />
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>Kategori</Label>
-          <Select
-            value={form.categoryId}
-            onValueChange={(val) => handleChange("categoryId", val)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Pilih kategori" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((c) => (
-                <SelectItem key={c.id} value={String(c.id)}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button
-          type="submit"
-          className="w-full h-11 font-semibold"
-          disabled={saving || uploading}
-        >
-          {saving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Menyimpan...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Simpan Produk
-            </>
-          )}
-        </Button>
       </form>
     </div>
   );

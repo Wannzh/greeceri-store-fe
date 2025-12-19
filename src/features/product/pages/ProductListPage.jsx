@@ -5,8 +5,7 @@ import ProductCard from "@/features/product/components/ProductCard";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Search, SlidersHorizontal, Grid3X3, LayoutGrid, Package } from "lucide-react";
+import { Search, Grid3X3, LayoutGrid, Package, X } from "lucide-react";
 
 export default function ProductListPage() {
   const [products, setProducts] = useState([]);
@@ -19,18 +18,31 @@ export default function ProductListPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [gridCols, setGridCols] = useState(4);
 
+  // Load categories once
   useEffect(() => {
-    loadData();
+    loadCategories();
   }, []);
 
-  const loadData = async () => {
+  // Load products when category changes
+  useEffect(() => {
+    loadProducts();
+  }, [selectedCategory]);
+
+  const loadCategories = async () => {
     try {
-      const [productsData, categoriesData] = await Promise.all([
-        productService.getAll(),
-        categoryService.getAllCategories(),
-      ]);
-      setProducts(productsData);
+      const categoriesData = await categoryService.getAllCategories();
       setCategories(categoriesData);
+    } catch (err) {
+      console.error("Gagal memuat kategori", err);
+    }
+  };
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const categoryId = selectedCategory === "all" ? null : selectedCategory;
+      const productsData = await productService.getAll(categoryId);
+      setProducts(productsData);
     } catch (err) {
       setError("Gagal memuat produk");
     } finally {
@@ -38,14 +50,9 @@ export default function ProductListPage() {
     }
   };
 
-  // Filtered products
+  // Filter only by search (category is handled by API)
   const filteredProducts = useMemo(() => {
     let result = [...products];
-
-    // Filter by category
-    if (selectedCategory !== "all") {
-      result = result.filter(p => p.categoryId === parseInt(selectedCategory) || p.category?.id === parseInt(selectedCategory));
-    }
 
     // Filter by search
     if (searchQuery.trim()) {
@@ -57,113 +64,127 @@ export default function ProductListPage() {
     }
 
     return result;
-  }, [products, selectedCategory, searchQuery]);
+  }, [products, searchQuery]);
 
-  if (loading) return <FullScreenLoader />;
+  if (loading && products.length === 0) return <FullScreenLoader />;
 
   if (error)
-    return <p className="p-6 text-center text-red-500">{error}</p>;
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-red-500 font-medium">{error}</p>
+          <Button onClick={() => window.location.reload()}>Coba Lagi</Button>
+        </div>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-primary to-primary/80 text-white">
-        <div className="container mx-auto px-6 py-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            Produk Segar
-          </h1>
-          <p className="text-white/80 text-lg">
-            Temukan berbagai produk segar berkualitas untuk kebutuhan Anda
-          </p>
+    <div className="min-h-screen bg-gray-50/50">
+      {/* Header Section */}
+      <div className="bg-white border-b sticky top-16 md:top-20 z-30 shadow-sm">
+        <div className="container mx-auto px-4 md:px-6 py-4">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+
+            {/* Search Bar */}
+            <div className="relative w-full md:max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Cari sayuran, buah, atau bumbu..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-11 h-12 rounded-full border-gray-200 bg-gray-50 focus:bg-white transition-all shadow-sm"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-200 text-gray-400"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* View Toggles & Stats */}
+            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+              <p className="text-sm text-gray-500 hidden sm:block">
+                Menampilkan <span className="font-bold text-gray-900">{filteredProducts.length}</span> produk
+              </p>
+
+              <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+                <Button
+                  variant={gridCols === 3 ? "white" : "ghost"}
+                  size="sm"
+                  className={`h-8 w-8 p-0 rounded-md ${gridCols === 3 ? "bg-white shadow-sm text-primary" : "text-gray-500"}`}
+                  onClick={() => setGridCols(3)}
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={gridCols === 4 ? "white" : "ghost"}
+                  size="sm"
+                  className={`h-8 w-8 p-0 rounded-md ${gridCols === 4 ? "bg-white shadow-sm text-primary" : "text-gray-500"}`}
+                  onClick={() => setGridCols(4)}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Category Filter Scroll */}
+          <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            <Button
+              variant={selectedCategory === "all" ? "default" : "outline"}
+              className={`rounded-full h-9 px-4 text-sm font-medium transition-all ${selectedCategory === "all" ? "shadow-md" : "border-gray-200 text-gray-600 hover:text-primary hover:border-primary/30"}`}
+              onClick={() => setSelectedCategory("all")}
+            >
+              Semua
+            </Button>
+            <div className="h-6 w-px bg-gray-200 mx-1 flex-shrink-0"></div>
+            {categories.map((cat) => (
+              <Button
+                key={cat.id}
+                variant={selectedCategory === String(cat.id) ? "default" : "outline"}
+                className={`rounded-full h-9 px-4 text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === String(cat.id) ? "shadow-md" : "border-gray-200 text-gray-600 hover:text-primary hover:border-primary/30"}`}
+                onClick={() => setSelectedCategory(String(cat.id))}
+              >
+                {cat.name}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
-        {/* Search & Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm border p-4 mb-8">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            {/* Search */}
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Cari produk..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-
-            {/* Category Filter */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
-              <SlidersHorizontal className="h-4 w-4 text-gray-400 hidden md:block" />
-              <Badge
-                variant={selectedCategory === "all" ? "default" : "outline"}
-                className="cursor-pointer whitespace-nowrap px-4 py-2"
-                onClick={() => setSelectedCategory("all")}
-              >
-                Semua
-              </Badge>
-              {categories.map((cat) => (
-                <Badge
-                  key={cat.id}
-                  variant={selectedCategory === String(cat.id) ? "default" : "outline"}
-                  className="cursor-pointer whitespace-nowrap px-4 py-2"
-                  onClick={() => setSelectedCategory(String(cat.id))}
-                >
-                  {cat.name}
-                </Badge>
-              ))}
-            </div>
-
-            {/* Grid Toggle */}
-            <div className="hidden md:flex items-center gap-1 border rounded-lg p-1">
-              <Button
-                variant={gridCols === 3 ? "default" : "ghost"}
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setGridCols(3)}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={gridCols === 4 ? "default" : "ghost"}
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setGridCols(4)}
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-            </div>
+      <div className="container mx-auto px-4 md:px-6 py-8">
+        {/* Loading indicator when switching categories */}
+        {loading && (
+          <div className="flex justify-center py-8">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
           </div>
-        </div>
-
-        {/* Results Info */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600">
-            Menampilkan <span className="font-semibold">{filteredProducts.length}</span> produk
-            {selectedCategory !== "all" && (
-              <span> dalam kategori <span className="font-semibold">{categories.find(c => String(c.id) === selectedCategory)?.name}</span></span>
-            )}
-          </p>
-        </div>
+        )}
 
         {/* Product Grid */}
-        {filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-xl border shadow-sm p-12 text-center">
-            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Produk Tidak Ditemukan</h3>
-            <p className="text-gray-500 mb-4">
-              Tidak ada produk yang cocok dengan pencarian Anda
+        {!loading && filteredProducts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+              <Package className="h-10 w-10 text-gray-300" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Produk Tidak Ditemukan</h3>
+            <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+              {searchQuery
+                ? `Maaf, kami tidak dapat menemukan produk yang sesuai dengan pencarian "${searchQuery}"`
+                : "Belum ada produk dalam kategori ini"
+              }
             </p>
-            <Button variant="outline" onClick={() => {
-              setSearchQuery("");
-              setSelectedCategory("all");
-            }}>
+            <Button
+              onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}
+              className="rounded-full px-8"
+            >
               Reset Filter
             </Button>
           </div>
         ) : (
-          <div className={`grid grid-cols-2 md:grid-cols-${gridCols} gap-6`}>
+          <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-${gridCols} gap-4 md:gap-6 lg:gap-8 pb-24`}>
             {filteredProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

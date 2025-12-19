@@ -5,16 +5,8 @@ import { orderService } from "@/services/orderService";
 import { addressService } from "@/services/addressService";
 import { Button } from "@/components/ui/button";
 import {
-    User,
-    Mail,
-    Phone,
-    Calendar,
-    UserCircle,
-    MapPin,
-    Edit,
-    ShoppingBag,
-    Wallet,
-    Lock,
+    User, Mail, Phone, Calendar, UserCircle, MapPin, Edit,
+    ShoppingBag, Wallet, Lock, ChevronRight, LogOut
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -50,7 +42,7 @@ export default function ProfilePage() {
             ]);
 
             const totalSpent = orders
-                .filter(o => o.status === "DELIVERED")
+                .filter(o => o.status === "DELIVERED" || o.status === "PAID")
                 .reduce((sum, o) => sum + (o.totalPrice || 0), 0);
 
             setStats({
@@ -72,180 +64,149 @@ export default function ProfilePage() {
     if (loading) {
         return (
             <div className="flex h-[70vh] items-center justify-center">
-                <div className="flex flex-col items-center gap-3">
-                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                    <p className="text-gray-500">Memuat profil...</p>
-                </div>
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
             </div>
         );
     }
 
     if (!profile) {
         return (
-            <div className="container mx-auto p-6 text-center">
-                <p className="text-gray-500">Data profil tidak tersedia</p>
+            <div className="container mx-auto p-6 text-center text-gray-500">
+                Data profil tidak tersedia
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto max-w-4xl px-4 space-y-6">
-
-                {/* PAGE HEADER */}
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Profil Saya</h1>
-                    <p className="text-gray-500">Kelola informasi akun Anda</p>
+        <div className="min-h-screen bg-gray-50 py-10">
+            <div className="container mx-auto max-w-5xl px-4 space-y-8">
+                
+                {/* HEADLINE */}
+                <div className="flex items-center justify-between">
+                     <h1 className="text-3xl font-bold text-gray-900">Akun Saya</h1>
                 </div>
 
-                {/* PROFILE HEADER CARD */}
-                <div className="bg-green-50 rounded-xl p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        {/* User Info */}
-                        <div className="flex items-center gap-4">
-                            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/70 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
-                                {profile.name?.charAt(0).toUpperCase()}
+                <div className="grid md:grid-cols-3 gap-6">
+                    {/* LEFT COL: CARD */}
+                    <div className="md:col-span-1 space-y-6">
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-br from-primary to-green-600"></div>
+                            
+                            <div className="relative mt-8 mb-4">
+                                <div className="h-24 w-24 mx-auto rounded-full bg-white p-1 shadow-lg">
+                                    <div className="h-full w-full rounded-full bg-gray-100 flex items-center justify-center text-3xl font-bold text-gray-600">
+                                         {profile.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-900">{profile.name}</h2>
-                                <p className="text-gray-600">{profile.email}</p>
-                                {profile.createdAt && (
-                                    <span className="inline-block mt-1 px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full">
-                                        Member sejak {formatMemberSince(profile.createdAt)}
-                                    </span>
-                                )}
+                            
+                            <h2 className="text-xl font-bold text-gray-900">{profile.name}</h2>
+                            <p className="text-sm text-gray-500 mb-6">{profile.email}</p>
+
+                            <Link to="/user/profile/edit">
+                                <Button variant="outline" className="w-full rounded-full border-gray-300">
+                                    Edit Profil
+                                </Button>
+                            </Link>
+                        </div>
+                        
+                        {/* Quick Stats Grid Mobile/Desktop */}
+                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Aktivitas</h3>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><ShoppingBag size={18} /></div>
+                                        <span className="font-medium text-gray-700">Total Pesanan</span>
+                                    </div>
+                                    <span className="font-bold text-gray-900">{stats.totalOrders}</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-green-100 text-green-600 rounded-lg"><Wallet size={18} /></div>
+                                        <span className="font-medium text-gray-700">Total Belanja</span>
+                                    </div>
+                                    <span className="font-bold text-gray-900 text-sm">Rp {stats.totalSpent.toLocaleString("id-ID", { notation: "compact" })}</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><MapPin size={18} /></div>
+                                        <span className="font-medium text-gray-700">Alamat</span>
+                                    </div>
+                                    <span className="font-bold text-gray-900">{stats.savedAddresses}</span>
+                                </div>
                             </div>
                         </div>
-
-                        {/* Edit Button */}
-                        <Link to="/user/profile/edit">
-                            <Button variant="outline" className="gap-2 bg-white">
-                                <Edit className="h-4 w-4" />
-                                Edit Profil
-                            </Button>
-                        </Link>
                     </div>
 
-                    {/* STATS ROW */}
-                    <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-primary/20">
-                        <div className="text-center">
-                            <p className="text-2xl font-bold text-primary">{stats.totalOrders}</p>
-                            <p className="text-sm text-gray-600">Total Pesanan</p>
+                    {/* RIGHT COL: DETAILS & ACTIONS */}
+                    <div className="md:col-span-2 space-y-6">
+                        
+                        {/* Detail Info */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                             <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <UserCircle className="text-primary h-5 w-5" /> Informasi Pribadi
+                            </h3>
+                            <div className="grid sm:grid-cols-2 gap-y-6 gap-x-12">
+                                <InfoItem label="Nama Lengkap" value={profile.name} icon={<User size={16} />} />
+                                <InfoItem label="Email" value={profile.email} icon={<Mail size={16} />} />
+                                <InfoItem label="Nomor Telepon" value={profile.phoneNumber || "-"} icon={<Phone size={16} />} />
+                                <InfoItem 
+                                    label="Tanggal Lahir" 
+                                    value={profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }) : "-"} 
+                                    icon={<Calendar size={16} />} 
+                                />
+                                <InfoItem 
+                                    label="Member Sejak" 
+                                    value={formatMemberSince(profile.createdAt)} 
+                                    icon={<Calendar size={16} />} 
+                                />
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <p className="text-2xl font-bold text-primary">
-                                Rp {stats.totalSpent.toLocaleString("id-ID")}
-                            </p>
-                            <p className="text-sm text-gray-600">Total Belanja</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-2xl font-bold text-primary">{stats.savedAddresses}</p>
-                            <p className="text-sm text-gray-600">Alamat Tersimpan</p>
-                        </div>
-                    </div>
-                </div>
 
-                {/* PROFILE INFO CARD */}
-                <div className="bg-white rounded-xl border shadow-sm p-6 space-y-6">
-                    {/* INFO GRID */}
-                    <div className="grid sm:grid-cols-2 gap-6">
-                        <InfoItem
-                            icon={<User className="h-5 w-5" />}
-                            label="Nama Lengkap"
-                            value={profile.name}
-                        />
-                        <InfoItem
-                            icon={<Mail className="h-5 w-5" />}
-                            label="Alamat Email"
-                            value={profile.email}
-                        />
-                        <InfoItem
-                            icon={<Phone className="h-5 w-5" />}
-                            label="Nomor Telepon"
-                            value={profile.phoneNumber || "-"}
-                        />
-                        <InfoItem
-                            icon={<UserCircle className="h-5 w-5" />}
-                            label="Jenis Kelamin"
-                            value={
-                                profile.gender === "MALE"
-                                    ? "Laki-laki"
-                                    : profile.gender === "FEMALE"
-                                        ? "Perempuan"
-                                        : "-"
-                            }
-                        />
-                        <InfoItem
-                            icon={<Calendar className="h-5 w-5" />}
-                            label="Tanggal Lahir"
-                            value={
-                                profile.dateOfBirth
-                                    ? new Date(profile.dateOfBirth).toLocaleDateString("id-ID", {
-                                        day: "numeric",
-                                        month: "long",
-                                        year: "numeric",
-                                    })
-                                    : "-"
-                            }
-                        />
-                    </div>
-                </div>
+                         {/* Quick Actions */}
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <Link to="/user/addresses" className="group p-5 bg-white rounded-2xl border border-gray-200 shadow-sm hover:border-primary/50 hover:shadow-md transition-all flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-10 w-10 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                                        <MapPin size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="font-bold text-gray-900">Alamat Saya</p>
+                                        <p className="text-xs text-gray-500">Kelola alamat pengiriman</p>
+                                    </div>
+                                </div>
+                                <ChevronRight className="text-gray-300 group-hover:text-primary" />
+                            </Link>
 
-                {/* ACTION CARDS */}
-                <div className="grid sm:grid-cols-2 gap-6">
-                    {/* Account Security */}
-                    <div className="bg-white rounded-xl border shadow-sm p-6">
-                        <div className="flex items-start gap-3 mb-4">
-                            <div className="p-2 bg-gray-100 rounded-lg">
-                                <Lock className="h-5 w-5 text-gray-600" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-gray-900">Keamanan Akun</h3>
-                                <p className="text-sm text-gray-500">Kelola password dan keamanan akun</p>
-                            </div>
+                             <Link to="/user/change-password" class="group p-5 bg-white rounded-2xl border border-gray-200 shadow-sm hover:border-primary/50 hover:shadow-md transition-all flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-10 w-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <Lock size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="font-bold text-gray-900">Keamanan</p>
+                                        <p className="text-xs text-gray-500">Ubah password & akun</p>
+                                    </div>
+                                </div>
+                                <ChevronRight className="text-gray-300 group-hover:text-primary" />
+                            </Link>
                         </div>
-                        <Link to="/user/change-password">
-                            <Button variant="outline" className="w-full">
-                                Ubah Password
-                            </Button>
-                        </Link>
-                    </div>
 
-                    {/* Addresses */}
-                    <div className="bg-white rounded-xl border shadow-sm p-6">
-                        <div className="flex items-start gap-3 mb-4">
-                            <div className="p-2 bg-gray-100 rounded-lg">
-                                <MapPin className="h-5 w-5 text-gray-600" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-gray-900">Alamat</h3>
-                                <p className="text-sm text-gray-500">Kelola alamat pengiriman Anda</p>
-                            </div>
-                        </div>
-                        <Link to="/user/addresses">
-                            <Button variant="outline" className="w-full">
-                                Kelola Alamat
-                            </Button>
-                        </Link>
                     </div>
                 </div>
-
             </div>
         </div>
     );
 }
 
-/* INFO ITEM COMPONENT */
-function InfoItem({ icon, label, value }) {
+function InfoItem({ label, value, icon }) {
     return (
-        <div className="space-y-2">
-            <div className="flex items-center gap-2 text-gray-500">
-                {icon}
-                <span className="text-sm font-medium">{label}</span>
-            </div>
-            <div className="bg-gray-50 rounded-lg px-4 py-3">
-                <p className="text-gray-900">{value}</p>
-            </div>
+        <div className="space-y-1.5">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
+                {icon} {label}
+            </p>
+            <p className="text-gray-900 font-medium text-base border-b border-gray-100 pb-2">{value}</p>
         </div>
     );
 }

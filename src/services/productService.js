@@ -1,13 +1,23 @@
 import api from "@/lib/axios";
 
 export const productService = {
-  getAll: async () => {
-    const res = await api.get("/products");
+  getAll: async (categoryId) => {
+    const params = {};
+    if (categoryId) {
+      params.categoryId = categoryId;
+    }
+    const res = await api.get("/products", { params });
     return res.data.data;
   },
 
   getById: async (id) => {
     const res = await api.get(`/products/${id}`);
+    return res.data.data;
+  },
+
+  // Admin: Get single product by ID (with categoryId)
+  getAdminProductById: async (id) => {
+    const res = await api.get(`/admin/products/${id}`);
     return res.data.data;
   },
 
