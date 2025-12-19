@@ -15,6 +15,47 @@ import {
 } from "@/components/ui/select";
 import toast from "react-hot-toast";
 import { Save, ArrowLeft, Loader2, Upload, X, ImageIcon, PackagePlus } from "lucide-react";
+import { CreatableSelect } from "@/components/ui/creatable-select";
+
+// Unit options for CreatableSelect
+const unitOptions = [
+  // --- SATUAN BERAT (UMUM) ---
+  { value: '1 kg', label: '1 kg' },
+  { value: '500 gr', label: '500 gr (Setengah Kg)' },
+  { value: '250 gr', label: '250 gr (Seperempat)' },
+  { value: '100 gr', label: '100 gr (1 Ons)' },
+
+  // --- SAYURAN DAUN (Bayam, Kangkung, Sawi) ---
+  { value: '1 ikat', label: '1 ikat' },
+  { value: '1 ikat besar', label: '1 ikat besar' },
+  { value: '1 ikat kecil', label: '1 ikat kecil' },
+
+  // --- BUAH & SAYUR BUAH (Apel, Semangka, Labu) ---
+  { value: '1 buah', label: '1 buah' },
+  { value: '1 potong', label: '1 potong (Irisan)' },
+  { value: '1 sisir', label: '1 sisir' },
+  { value: '1 juring', label: '1 juring' },
+
+  // --- LAUK PAUK (Ikan, Ayam) ---
+  { value: '1 ekor', label: '1 ekor' },
+  { value: '1 ekor (± 700-800gr)', label: '1 ekor (± 700-800gr)' },
+  { value: '1 ekor (± 1kg)', label: '1 ekor (± 1kg)' },
+  { value: '1 pasang', label: '1 pasang' },
+
+  // --- BUMBU & REMPAH ---
+  { value: '1 bungkus', label: '1 bungkus' },
+  { value: '1 siung', label: '1 siung' },
+  { value: '1 bonggol', label: '1 bonggol' },
+  { value: '1 ruas', label: '1 ruas' },
+
+  // --- KEMASAN KHUSUS (Tempe, Telur, Tahu) ---
+  { value: '1 papan', label: '1 papan' },
+  { value: '1 butir', label: '1 butir' },
+  { value: '1 pack', label: '1 pack' },
+  { value: '1 porsi', label: '1 porsi' },
+  { value: '1 paket', label: '1 paket' },
+  { value: '1 tray', label: '1 tray' },
+];
 
 export default function AdminProductFormPage() {
   const { productId } = useParams();
@@ -32,6 +73,7 @@ export default function AdminProductFormPage() {
     description: "",
     price: "",
     stock: "",
+    unit: "",
     imageUrl: "",
     categoryId: "",
   });
@@ -55,6 +97,7 @@ export default function AdminProductFormPage() {
         description: data.description || "",
         price: data.price || "",
         stock: data.stock || "",
+        unit: data.unit || "",
         imageUrl: data.imageUrl || "",
         categoryId: String(data.categoryId || ""),
       });
@@ -118,6 +161,7 @@ export default function AdminProductFormPage() {
         ...form,
         price: Number(form.price),
         stock: Number(form.stock),
+        unit: form.unit,
         categoryId: Number(form.categoryId),
       };
 
@@ -297,7 +341,7 @@ export default function AdminProductFormPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="price">Harga (Rp) <span className="text-red-500">*</span></Label>
                   <div className="relative">
@@ -325,6 +369,17 @@ export default function AdminProductFormPage() {
                     className="h-11"
                     placeholder="0"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="unit">Satuan <span className="text-red-500">*</span></Label>
+                  <CreatableSelect
+                    options={unitOptions}
+                    value={form.unit}
+                    onChange={(val) => handleChange("unit", val)}
+                    placeholder="Pilih atau ketik satuan..."
+                  />
+                  <p className="text-xs text-gray-500">Pilih dari daftar atau ketik satuan custom lalu tekan Enter</p>
                 </div>
               </div>
             </div>

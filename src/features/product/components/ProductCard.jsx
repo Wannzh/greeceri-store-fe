@@ -72,6 +72,7 @@ export default function ProductCard({ product }) {
         <div className="flex items-center justify-between">
           <p className="text-lg font-bold text-primary">
             Rp {product.price?.toLocaleString("id-ID")}
+            {product.unit && <span className="text-sm font-normal text-gray-500">/{product.unit}</span>}
           </p>
           {!isOutOfStock && (
             <p className="text-xs text-gray-500 flex items-center gap-1">

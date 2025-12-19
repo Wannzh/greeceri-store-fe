@@ -140,6 +140,7 @@ export default function AdminProductListPage() {
                 <th className="px-4 py-3 text-left">Nama</th>
                 <th className="px-4 py-3">Kategori</th>
                 <th className="px-4 py-3">Harga</th>
+                <th className="px-4 py-3">Satuan</th>
                 <th className="px-4 py-3">Stok</th>
                 <th className="px-4 py-3 text-right">Aksi</th>
               </tr>
@@ -172,6 +173,10 @@ export default function AdminProductListPage() {
 
                   <td className="px-4 py-3 text-center">
                     Rp {(p.price || 0).toLocaleString("id-ID")}
+                  </td>
+
+                  <td className="px-4 py-3 text-center text-gray-600">
+                    {p.unit || "-"}
                   </td>
 
                   <td className="px-4 py-3 text-center">
