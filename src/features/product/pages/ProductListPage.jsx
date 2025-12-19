@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { productService } from "@/services/productService";
 import { categoryService } from "@/services/categoryService";
 import ProductCard from "@/features/product/components/ProductCard";
@@ -8,15 +9,29 @@ import { Button } from "@/components/ui/button";
 import { Search, Grid3X3, LayoutGrid, Package, X } from "lucide-react";
 
 export default function ProductListPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Filters
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  // Filters - initialize from URL params
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
   const [gridCols, setGridCols] = useState(4);
+
+  // Sync URL params when searchQuery changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+    if (selectedCategory !== "all") {
+      params.set("category", selectedCategory);
+    }
+    setSearchParams(params, { replace: true });
+  }, [searchQuery, selectedCategory, setSearchParams]);
 
   // Load categories once
   useEffect(() => {

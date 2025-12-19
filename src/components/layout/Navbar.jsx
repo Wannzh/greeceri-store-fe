@@ -33,6 +33,7 @@ export default function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery(""); // Reset input after search
     }
   };
 
