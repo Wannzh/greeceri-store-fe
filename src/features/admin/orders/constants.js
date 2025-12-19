@@ -31,7 +31,7 @@ export const STATUS_FLOW = {
   PENDING_PAYMENT: ["PAID", "CANCELLED"],
   PAID: ["PROCESSING", "CANCELLED"],
   PROCESSING: ["SHIPPED", "CANCELLED"],
-  SHIPPED: ["DELIVERED"],
+  SHIPPED: [], // Admin cannot change to DELIVERED, only user can confirm
   DELIVERED: [],
   CANCELLED: [],
 };

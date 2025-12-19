@@ -15,4 +15,9 @@ export const orderService = {
     const res = await api.get(`/orders/my/${orderId}`);
     return res.data.data;
   },
+
+  confirmDelivery: async (orderId) => {
+    const res = await api.put(`/orders/my/${orderId}/confirm-delivery`);
+    return res.data.data;
+  },
 };

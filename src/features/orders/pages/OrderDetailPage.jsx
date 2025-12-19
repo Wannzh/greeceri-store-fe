@@ -2,13 +2,15 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { orderService } from "@/services/orderService";
 import { DELIVERY_SLOT_LABELS } from "@/services/shippingService";
-import { ArrowLeft, MapPin, Package, CreditCard, Clock, ImageOff, Truck, Calendar } from "lucide-react";
+import { ArrowLeft, MapPin, Package, CreditCard, Clock, ImageOff, Truck, Calendar, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 export default function OrderDetailPage() {
     const { orderId } = useParams();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [confirming, setConfirming] = useState(false);
 
     useEffect(() => {
         const loadDetail = async () => {
@@ -28,6 +30,36 @@ export default function OrderDetailPage() {
         };
         loadDetail();
     }, [orderId]);
+
+    const loadDetail = async () => {
+        try {
+            setLoading(true);
+            const orderDetail = await orderService.getOrderDetail(orderId);
+            if (orderDetail) {
+                setOrder(orderDetail);
+            }
+        } catch (err) {
+            console.error("Gagal load detail:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleConfirmDelivery = async () => {
+        try {
+            setConfirming(true);
+            await orderService.confirmDelivery(orderId);
+            toast.success("Pesanan berhasil dikonfirmasi diterima!");
+            // Reload order detail
+            const updatedOrder = await orderService.getOrderDetail(orderId);
+            setOrder(updatedOrder);
+        } catch (err) {
+            console.error("Gagal konfirmasi:", err);
+            toast.error(err.response?.data?.message || "Gagal mengkonfirmasi penerimaan.");
+        } finally {
+            setConfirming(false);
+        }
+    };
 
 
     if (loading) {
@@ -117,6 +149,27 @@ export default function OrderDetailPage() {
                                 onClick={() => window.location.href = order.paymentUrl}
                             >
                                 <CreditCard className="mr-2 h-4 w-4" /> Bayar Sekarang
+                            </Button>
+                        )}
+
+                        {/* Tombol Konfirmasi Diterima jika status SHIPPED */}
+                        {order.status === "SHIPPED" && (
+                            <Button
+                                className="bg-green-600 hover:bg-green-700 shadow-md shadow-green-600/20"
+                                onClick={handleConfirmDelivery}
+                                disabled={confirming}
+                            >
+                                {confirming ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Mengkonfirmasi...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CheckCircle className="mr-2 h-4 w-4" />
+                                        Konfirmasi Diterima
+                                    </>
+                                )}
                             </Button>
                         )}
                     </div>
