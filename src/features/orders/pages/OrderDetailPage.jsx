@@ -1,7 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { orderService } from "@/services/orderService";
-import { ArrowLeft, MapPin, Package, CreditCard, Clock, ImageOff } from "lucide-react"; // Tambah icon ImageOff
+import { DELIVERY_SLOT_LABELS } from "@/services/shippingService";
+import { ArrowLeft, MapPin, Package, CreditCard, Clock, ImageOff, Truck, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function OrderDetailPage() {
@@ -13,9 +14,7 @@ export default function OrderDetailPage() {
         const loadDetail = async () => {
             try {
                 setLoading(true);
-
                 const orderDetail = await orderService.getOrderDetail(orderId);
-
                 if (orderDetail) {
                     setOrder(orderDetail);
                 } else {
@@ -27,7 +26,6 @@ export default function OrderDetailPage() {
                 setLoading(false);
             }
         };
-
         loadDetail();
     }, [orderId]);
 
@@ -61,9 +59,23 @@ export default function OrderDetailPage() {
         switch (status) {
             case "PAID": return "bg-green-100 text-green-700 border-green-200";
             case "PENDING_PAYMENT": return "bg-yellow-100 text-yellow-700 border-yellow-200";
+            case "PROCESSING": return "bg-orange-100 text-orange-700 border-orange-200";
             case "CANCELLED": return "bg-red-100 text-red-700 border-red-200";
+            case "SHIPPED": return "bg-blue-100 text-blue-700 border-blue-200";
+            case "DELIVERED": return "bg-gray-100 text-gray-700 border-gray-200";
             default: return "bg-gray-100 text-gray-700 border-gray-200";
         }
+    };
+
+    // Format delivery date
+    const formatDeliveryDate = (dateStr) => {
+        if (!dateStr) return "-";
+        return new Date(dateStr).toLocaleDateString("id-ID", {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 
     return (
@@ -94,7 +106,6 @@ export default function OrderDetailPage() {
                                     {order.orderDate
                                         ? new Date(order.orderDate).toLocaleString("id-ID")
                                         : "-"}
-
                                 </span>
                             </div>
                         </div>
@@ -122,7 +133,6 @@ export default function OrderDetailPage() {
                             <div className="divide-y divide-gray-100">
                                 {order.items?.map((item, idx) => (
                                     <div key={idx} className="py-4 flex gap-4 first:pt-0 last:pb-0">
-                                        {/* GAMBAR PRODUK */}
                                         <div className="h-20 w-20 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
                                             {item.productImageUrl ? (
                                                 <img
@@ -153,10 +163,39 @@ export default function OrderDetailPage() {
                     {/* KOLOM KANAN: Info Pengiriman & Pembayaran */}
                     <div className="md:col-span-1 space-y-6">
 
+                        {/* Jadwal Pengiriman */}
+                        {(order.deliveryDate || order.deliverySlot) && (
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                                    <Calendar className="text-gray-400" /> Jadwal Pengiriman
+                                </h2>
+                                <div className="space-y-2 text-sm">
+                                    {order.deliveryDate && (
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Tanggal</span>
+                                            <span className="font-medium">{formatDeliveryDate(order.deliveryDate)}</span>
+                                        </div>
+                                    )}
+                                    {order.deliverySlot && (
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Waktu</span>
+                                            <span className="font-medium">{DELIVERY_SLOT_LABELS[order.deliverySlot] || order.deliverySlot}</span>
+                                        </div>
+                                    )}
+                                    {order.distanceKm && (
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Jarak</span>
+                                            <span className="font-medium">{order.distanceKm.toFixed(2)} km</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Alamat */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                                <MapPin className="text-gray-400" /> Pengiriman
+                                <MapPin className="text-gray-400" /> Alamat Pengiriman
                             </h2>
                             {order.shippingAddress ? (
                                 <div className="text-sm space-y-2 text-gray-600">
@@ -177,28 +216,30 @@ export default function OrderDetailPage() {
 
                         {/* Total Pembayaran */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <h2 className="font-semibold text-lg mb-4">Ringkasan</h2>
+                            <h2 className="font-semibold text-lg mb-4">Ringkasan Pembayaran</h2>
                             <div className="space-y-3 text-sm border-b border-gray-100 pb-4 mb-4">
                                 <div className="flex justify-between text-gray-600">
-                                    <span>Total Harga</span>
-                                    <span>Rp {order.totalPrice?.toLocaleString("id-ID")}</span>
+                                    <span>Subtotal</span>
+                                    <span>Rp {(order.subtotal || order.totalPrice)?.toLocaleString("id-ID")}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600">
                                     <span>Ongkos Kirim</span>
-                                    <span className="text-green-600 font-medium">Gratis</span>
+                                    {order.shippingCost !== undefined && order.shippingCost !== null ? (
+                                        <span>Rp {order.shippingCost.toLocaleString("id-ID")}</span>
+                                    ) : (
+                                        <span className="text-green-600 font-medium">Gratis</span>
+                                    )}
                                 </div>
-                                {/* Biaya layanan dummy agar konsisten dengan checkout */}
                                 <div className="flex justify-between text-gray-600">
                                     <span>Biaya Layanan</span>
-                                    <span>Rp 1.000</span>
+                                    <span>Rp {(order.serviceFee || 1000).toLocaleString("id-ID")}</span>
                                 </div>
                             </div>
 
                             <div className="flex justify-between items-center">
                                 <span className="font-bold text-gray-700">Total Bayar</span>
                                 <span className="font-bold text-xl text-primary">
-                                    {/* Tambah 1000 dummy service fee */}
-                                    Rp {((order.totalPrice || 0)).toLocaleString("id-ID")}
+                                    Rp {(order.totalPrice || 0).toLocaleString("id-ID")}
                                 </span>
                             </div>
                         </div>

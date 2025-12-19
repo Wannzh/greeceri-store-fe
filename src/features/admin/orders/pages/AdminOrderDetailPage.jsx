@@ -185,7 +185,7 @@ export default function AdminOrderDetailPage() {
     const isFinal = order?.status === "DELIVERED" || order?.status === "CANCELLED";
 
     return (
-        <div className="space-y-6 max-w-3xl">
+        <div className="space-y-6 max-w-4xl">
 
             {/* Header with Back & Print */}
             <div className="flex items-center justify-between">

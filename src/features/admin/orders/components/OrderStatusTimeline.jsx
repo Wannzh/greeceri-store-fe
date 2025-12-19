@@ -3,7 +3,7 @@ import { STATUS_LABEL } from "@/features/admin/orders/constants";
 
 // Horizontal timeline for order statuses
 export default function OrderStatusTimeline({ currentStatus }) {
-  const flow = ["PENDING_PAYMENT", "PAID", "SHIPPED", "DELIVERED"];
+  const flow = ["PENDING_PAYMENT", "PAID", "PROCESSING", "SHIPPED", "DELIVERED"];
 
   // If cancelled, mark separately
   if (currentStatus === "CANCELLED") {

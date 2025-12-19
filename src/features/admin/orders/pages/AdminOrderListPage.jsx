@@ -222,7 +222,8 @@ export default function AdminOrderListPage() {
                                 <th className="p-4">User</th>
                                 <th className="p-4">Total</th>
                                 <th className="p-4">Status</th>
-                                <th className="p-4">Tanggal</th>
+                                <th className="p-4">Tanggal Order</th>
+                                <th className="p-4">Pengiriman</th>
                                 <th className="p-4 text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -244,6 +245,20 @@ export default function AdminOrderListPage() {
                                     </td>
                                     <td className="p-4 text-center">
                                         {new Date(o.createdAt).toLocaleDateString("id-ID")}
+                                    </td>
+                                    <td className="p-4 text-center text-xs">
+                                        {o.deliveryDate ? (
+                                            <div>
+                                                <div>{new Date(o.deliveryDate).toLocaleDateString("id-ID")}</div>
+                                                {o.deliverySlot && (
+                                                    <div className="text-gray-500">
+                                                        {o.deliverySlot === "MORNING" ? "Pagi" : "Siang"}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <span className="text-gray-400">-</span>
+                                        )}
                                     </td>
                                     <td className="p-4">
                                         <div className="flex justify-end">

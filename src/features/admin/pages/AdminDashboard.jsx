@@ -350,6 +350,7 @@ export default function AdminDashboard() {
 const STATUS_COLORS = {
   PENDING_PAYMENT: "#F59E0B",
   PAID: "#3B82F6",
+  PROCESSING: "#F97316",
   SHIPPED: "#8B5CF6",
   DELIVERED: "#10B981",
   CANCELLED: "#EF4444",
