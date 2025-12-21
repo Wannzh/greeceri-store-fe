@@ -52,6 +52,7 @@ import AdminOrderDetailPage from "@/features/admin/orders/pages/AdminOrderDetail
 import AdminUserListPage from "@/features/admin/users/pages/AdminUserListPage";
 import AdminUserDetailPage from "@/features/admin/users/pages/AdminUserDetailPage";
 import AdminSettingsPage from "@/features/admin/pages/AdminSettingsPage";
+import AdminNotificationsPage from "@/features/admin/pages/AdminNotificationsPage";
 
 export default function AppRouter() {
     return (
@@ -211,6 +212,9 @@ export default function AppRouter() {
 
                 {/* Settings */}
                 <Route path="settings" element={<AdminSettingsPage />} />
+
+                {/* Notifications */}
+                <Route path="notifications" element={<AdminNotificationsPage />} />
 
             </Route>
 
