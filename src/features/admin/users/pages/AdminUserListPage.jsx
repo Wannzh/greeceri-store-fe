@@ -94,7 +94,7 @@ export default function AdminUserListPage() {
 
             {/* ================= TABLE ================= */}
             {loading ? (
-                <div className="bg-white rounded-xl border shadow-sm">
+                <div className="bg-card rounded-xl border shadow-sm">
                     <table className="w-full text-sm">
                         <tbody>
                             {[...Array(6)].map((_, i) => (
@@ -115,13 +115,13 @@ export default function AdminUserListPage() {
                     <AlertDescription>{error}</AlertDescription>
                 </Alert>
             ) : users.length === 0 ? (
-                <div className="bg-white rounded-xl p-10 text-center text-gray-500">
+                <div className="bg-card rounded-xl p-10 text-center text-muted-foreground">
                     Tidak ada user ditemukan
                 </div>
             ) : (
-                <div className="bg-white rounded-xl border shadow-sm overflow-x-auto">
+                <div className="bg-card rounded-xl border shadow-sm overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-100">
+                        <thead className="bg-muted">
                             <tr>
                                 <th className="p-4 text-left">Nama</th>
                                 <th className="p-4 text-left">Email</th>
@@ -137,10 +137,10 @@ export default function AdminUserListPage() {
                             {users.map((u) => (
                                 <tr
                                     key={u.id}
-                                    className="border-t hover:bg-gray-50"
+                                    className="border-t hover:bg-muted"
                                 >
                                     <td className="p-4 font-medium">{u.name}</td>
-                                    <td className="p-4 text-gray-600">{u.email}</td>
+                                    <td className="p-4 text-muted-foreground">{u.email}</td>
                                     <td className="p-4 text-center">
                                         <Badge variant={u.role === "ADMIN" ? "default" : "secondary"}>
                                             {u.role}
@@ -173,7 +173,7 @@ export default function AdminUserListPage() {
 
                     {/* ================= PAGINATION ================= */}
                     <div className="flex items-center justify-between px-4 py-3 border-t">
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-muted-foreground">
                             Page <b>{page}</b> / {totalPages}
                         </div>
 

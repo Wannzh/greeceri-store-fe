@@ -189,7 +189,7 @@ export default function AdminOrderListPage() {
 
             {/* ================= TABLE ================= */}
             {loading ? (
-                <div className="bg-white rounded-xl border shadow-sm">
+                <div className="bg-card rounded-xl border shadow-sm">
                     <table className="w-full text-sm">
                         <tbody>
                             {[...Array(6)].map((_, i) => (
@@ -210,13 +210,13 @@ export default function AdminOrderListPage() {
                     <AlertDescription>{error}</AlertDescription>
                 </Alert>
             ) : orders.length === 0 ? (
-                <div className="bg-white rounded-xl p-10 text-center text-gray-500">
+                <div className="bg-card rounded-xl p-10 text-center text-muted-foreground">
                     Tidak ada order ditemukan
                 </div>
             ) : (
-                <div className="bg-white rounded-xl border shadow-sm overflow-x-auto">
+                <div className="bg-card rounded-xl border shadow-sm overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-100">
+                        <thead className="bg-muted">
                             <tr>
                                 <th className="p-4 text-left">Order ID</th>
                                 <th className="p-4">User</th>
@@ -232,7 +232,7 @@ export default function AdminOrderListPage() {
                             {orders.map((o) => (
                                 <tr
                                     key={o.id}
-                                    className="border-t hover:bg-gray-50 cursor-pointer"
+                                    className="border-t hover:bg-muted cursor-pointer"
                                     onClick={() => navigate(`/admin/orders/${o.id}`)}
                                 >
                                     <td className="p-4 font-medium">{o.id.slice(0, 8)}...</td>
@@ -251,7 +251,7 @@ export default function AdminOrderListPage() {
                                             <div>
                                                 <div>{new Date(o.deliveryDate).toLocaleDateString("id-ID")}</div>
                                                 {o.deliverySlot && (
-                                                    <div className="text-gray-500">
+                                                    <div className="text-muted-foreground">
                                                         {o.deliverySlot === "MORNING" ? "Pagi" : "Siang"}
                                                     </div>
                                                 )}
@@ -276,7 +276,7 @@ export default function AdminOrderListPage() {
 
                     {/* ================= PAGINATION ================= */}
                     <div className="flex items-center justify-between px-4 py-3 border-t">
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-muted-foreground">
                             Page <b>{page}</b> / {totalPages}
                         </div>
 

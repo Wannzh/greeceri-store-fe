@@ -93,7 +93,7 @@ export default function AdminUserDetailPage() {
             </div>
 
             {/* User Info Card */}
-            <div className="bg-white rounded-xl p-6 border shadow-sm space-y-4">
+            <div className="bg-card rounded-xl p-6 border shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center">
@@ -101,7 +101,7 @@ export default function AdminUserDetailPage() {
                         </div>
                         <div>
                             <h2 className="text-xl font-semibold">{user?.name}</h2>
-                            <p className="text-gray-500">{user?.email}</p>
+                            <p className="text-muted-foreground">{user?.email}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function AdminUserDetailPage() {
                     <div className="flex items-center gap-3">
                         <Mail className="h-5 w-5 text-gray-400" />
                         <div>
-                            <p className="text-sm text-gray-500">Email</p>
+                            <p className="text-sm text-muted-foreground">Email</p>
                             <p className="font-medium">{user?.email || "-"}</p>
                         </div>
                     </div>
@@ -128,7 +128,7 @@ export default function AdminUserDetailPage() {
                     <div className="flex items-center gap-3">
                         <Phone className="h-5 w-5 text-gray-400" />
                         <div>
-                            <p className="text-sm text-gray-500">Phone</p>
+                            <p className="text-sm text-muted-foreground">Phone</p>
                             <p className="font-medium">{user?.phoneNumber || "-"}</p>
                         </div>
                     </div>
@@ -136,7 +136,7 @@ export default function AdminUserDetailPage() {
                     <div className="flex items-center gap-3">
                         <User className="h-5 w-5 text-gray-400" />
                         <div>
-                            <p className="text-sm text-gray-500">Gender</p>
+                            <p className="text-sm text-muted-foreground">Gender</p>
                             <p className="font-medium">{user?.gender || "-"}</p>
                         </div>
                     </div>
@@ -144,7 +144,7 @@ export default function AdminUserDetailPage() {
                     <div className="flex items-center gap-3">
                         <Calendar className="h-5 w-5 text-gray-400" />
                         <div>
-                            <p className="text-sm text-gray-500">Date of Birth</p>
+                            <p className="text-sm text-muted-foreground">Date of Birth</p>
                             <p className="font-medium">{formatDate(user?.dateOfBirth)}</p>
                         </div>
                     </div>
@@ -153,22 +153,22 @@ export default function AdminUserDetailPage() {
 
             {/* Stats Card */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-xl p-5 border shadow-sm flex items-center gap-4">
+                <div className="bg-card rounded-xl p-5 border shadow-sm flex items-center gap-4">
                     <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <ShoppingBag className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500">Total Orders</p>
+                        <p className="text-sm text-muted-foreground">Total Orders</p>
                         <p className="text-2xl font-bold">{user?.totalOrders ?? 0}</p>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-5 border shadow-sm flex items-center gap-4">
+                <div className="bg-card rounded-xl p-5 border shadow-sm flex items-center gap-4">
                     <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
                         <DollarSign className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500">Total Spent</p>
+                        <p className="text-sm text-muted-foreground">Total Spent</p>
                         <p className="text-2xl font-bold">
                             Rp {(user?.totalSpent ?? 0).toLocaleString("id-ID")}
                         </p>
@@ -178,7 +178,7 @@ export default function AdminUserDetailPage() {
 
             {/* Account Status Card */}
             {user?.role !== "ADMIN" && (
-                <div className="bg-white rounded-xl p-6 border shadow-sm">
+                <div className="bg-card rounded-xl p-6 border shadow-sm">
                     <h3 className="font-semibold mb-4">Account Status</h3>
 
                     <div className="flex items-center justify-between">
@@ -186,7 +186,7 @@ export default function AdminUserDetailPage() {
                             <p className="font-medium">
                                 {user?.enabled ? "User Aktif" : "User Nonaktif"}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground">
                                 {user?.enabled
                                     ? "User dapat login dan melakukan transaksi"
                                     : "User tidak dapat login ke sistem"}

@@ -201,7 +201,7 @@ export default function AdminOrderDetailPage() {
                 </Button>
             </div>
 
-            <div className="bg-white rounded-xl p-6 border shadow-sm space-y-3">
+            <div className="bg-card rounded-xl p-6 border shadow-sm space-y-3">
                 <p>
                     <b>Order ID:</b> {order?.id}
                 </p>
@@ -211,10 +211,10 @@ export default function AdminOrderDetailPage() {
 
                 <div>
                     <p className="font-semibold">Alamat Pengiriman</p>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-foreground">
                         {order?.shippingAddress?.receiverName || "-"} • {order?.shippingAddress?.phoneNumber || "-"}
                     </p>
-                    <p className="text-sm text-gray-600">{order?.shippingAddress?.fullAddress || "-"}</p>
+                    <p className="text-sm text-muted-foreground">{order?.shippingAddress?.fullAddress || "-"}</p>
                 </div>
 
                 <p>
@@ -230,12 +230,12 @@ export default function AdminOrderDetailPage() {
                 </p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 border shadow-sm">
+            <div className="bg-card rounded-xl p-6 border shadow-sm">
                 <p className="font-semibold mb-3">Status Timeline</p>
                 <OrderStatusTimeline currentStatus={order?.status} />
             </div>
 
-            <div className="bg-white rounded-xl p-6 border shadow-sm space-y-4">
+            <div className="bg-card rounded-xl p-6 border shadow-sm space-y-4">
                 <p className="font-semibold">Update Status Order</p>
 
                 {error ? (
@@ -245,7 +245,7 @@ export default function AdminOrderDetailPage() {
                 ) : isFinal ? (
                     <div>
                         <OrderStatusBadge status={order?.status} className="mb-2" />
-                        <p className="text-sm text-gray-500">This order status is final and cannot be changed</p>
+                        <p className="text-sm text-muted-foreground">This order status is final and cannot be changed</p>
                     </div>
                 ) : (
                     <>
@@ -293,11 +293,11 @@ export default function AdminOrderDetailPage() {
             </div>
 
             {order.items && (
-                <div className="bg-white rounded-xl p-6 border shadow-sm space-y-3">
+                <div className="bg-card rounded-xl p-6 border shadow-sm space-y-3">
                     <p className="font-semibold">Item Pesanan</p>
 
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-100">
+                        <thead className="bg-muted">
                             <tr>
                                 <th className="p-2 text-left">Produk</th>
                                 <th className="p-2 text-center">Qty</th>

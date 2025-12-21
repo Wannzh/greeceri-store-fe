@@ -169,7 +169,7 @@ export default function AdminDashboard() {
           <LayoutDashboard className="h-6 w-6" /> Dashboard
         </h1>
         <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-gray-500" />
+          <Calendar className="h-4 w-4 text-muted-foreground" />
           <Select value={dateRange} onValueChange={setDateRange}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Pilih Periode" />
@@ -208,13 +208,13 @@ export default function AdminDashboard() {
       {/* CHARTS ROW 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Orders by Status */}
-        <div className="bg-white rounded-xl border shadow-sm p-4">
-          <h3 className="font-medium mb-3">Orders by Status</h3>
-          <div className="h-64">
+        <div className="bg-card rounded-xl border border-border shadow-sm p-4">
+          <h3 className="font-medium mb-3 text-foreground">Orders by Status</h3>
+          <div className="h-48 min-w-0">
             {loadingOrders ? (
-              <div className="flex h-full items-center justify-center text-gray-400">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
             ) : filteredOrders.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-gray-500">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -224,8 +224,8 @@ export default function AdminDashboard() {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
-                    label
+                    outerRadius={70}
+                    label={({ name, value }) => `${value}`}
                   >
                     {getStatusChartData(filteredOrders).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.status]} />
@@ -236,16 +236,27 @@ export default function AdminDashboard() {
               </ResponsiveContainer>
             )}
           </div>
+          {/* Legend */}
+          <div className="mt-3 pt-3 border-t border-border">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+              {Object.entries(STATUS_COLORS).map(([status, color]) => (
+                <div key={status} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                  <span className="text-muted-foreground truncate">{STATUS_LABEL[status] || status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Revenue per Month */}
-        <div className="bg-white rounded-xl border shadow-sm p-4">
-          <h3 className="font-medium mb-3">Revenue per Month</h3>
-          <div className="h-64">
+        <div className="bg-card rounded-xl border border-border shadow-sm p-4">
+          <h3 className="font-medium mb-3 text-foreground">Revenue per Month</h3>
+          <div className="h-64 min-w-0">
             {loadingOrders ? (
-              <div className="flex h-full items-center justify-center text-gray-400">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
             ) : filteredOrders.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-gray-500">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={getRevenueChartData(filteredOrders)} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -270,22 +281,22 @@ export default function AdminDashboard() {
       {/* CHARTS ROW 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Best Selling Products */}
-        <div className="bg-white rounded-xl border shadow-sm p-4">
-          <h3 className="font-medium mb-3 flex items-center gap-2">
+        <div className="bg-card rounded-xl border border-border shadow-sm p-4">
+          <h3 className="font-medium mb-3 flex items-center gap-2 text-foreground">
             <Award className="h-4 w-4 text-yellow-500" /> Best Selling Products
           </h3>
-          <div className="h-64">
+          <div className="h-64 min-w-0">
             {loadingBestSellers ? (
-              <div className="flex h-full items-center justify-center text-gray-400">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
             ) : bestSellers.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-gray-500">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={bestSellers} layout="vertical" margin={{ left: 80, right: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" tickFormatter={(v) => formatCompactNumber(v)} />
-                  <YAxis type="category" dataKey="productName" tick={{ fontSize: 11 }} width={80} />
-                  <Tooltip formatter={(value) => [value, "Sold"]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-border" />
+                  <XAxis type="number" tickFormatter={(v) => formatCompactNumber(v)} tick={{ fill: 'currentColor' }} className="text-muted-foreground" />
+                  <YAxis type="category" dataKey="productName" tick={{ fontSize: 11, fill: 'currentColor' }} width={80} className="text-muted-foreground" />
+                  <Tooltip formatter={(value) => [value, "Sold"]} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
                   <Bar dataKey="totalSold" fill="#10B981" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -294,15 +305,15 @@ export default function AdminDashboard() {
         </div>
 
         {/* User Growth */}
-        <div className="bg-white rounded-xl border shadow-sm p-4">
-          <h3 className="font-medium mb-3 flex items-center gap-2">
+        <div className="bg-card rounded-xl border border-border shadow-sm p-4">
+          <h3 className="font-medium mb-3 flex items-center gap-2 text-foreground">
             <Users className="h-4 w-4 text-blue-500" /> User Growth per Month
           </h3>
-          <div className="h-64">
+          <div className="h-64 min-w-0">
             {loadingUserGrowth ? (
-              <div className="flex h-full items-center justify-center text-gray-400">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
             ) : userGrowth.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-gray-500">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={userGrowth} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -320,24 +331,24 @@ export default function AdminDashboard() {
       </div>
 
       {/* RECENT ORDERS */}
-      <div className="bg-white rounded-xl border shadow-sm p-6">
-        <h2 className="font-semibold mb-4">Recent Orders</h2>
+      <div className="bg-card rounded-xl border border-border shadow-sm p-6">
+        <h2 className="font-semibold mb-4 text-foreground">Recent Orders</h2>
         <table className="w-full text-sm">
-          <thead className="bg-gray-100">
+          <thead className="bg-muted">
             <tr>
-              <th className="p-2 text-left">Order ID</th>
-              <th className="p-2">User</th>
-              <th className="p-2">Total</th>
-              <th className="p-2">Status</th>
+              <th className="p-2 text-left text-muted-foreground">Order ID</th>
+              <th className="p-2 text-muted-foreground">User</th>
+              <th className="p-2 text-muted-foreground">Total</th>
+              <th className="p-2 text-muted-foreground">Status</th>
             </tr>
           </thead>
           <tbody>
             {data.recentOrders.map((o) => (
-              <tr key={o.id} className="border-t">
-                <td className="p-2">{o.id?.slice(0, 8)}...</td>
-                <td className="p-2 text-center">{o.userName}</td>
-                <td className="p-2 text-center">Rp {(o.totalPrice || 0).toLocaleString("id-ID")}</td>
-                <td className="p-2 text-center">{STATUS_LABEL[o.status] || o.status}</td>
+              <tr key={o.id} className="border-t border-border">
+                <td className="p-2 text-foreground">{o.id?.slice(0, 8)}...</td>
+                <td className="p-2 text-center text-foreground">{o.userName}</td>
+                <td className="p-2 text-center text-foreground">Rp {(o.totalPrice || 0).toLocaleString("id-ID")}</td>
+                <td className="p-2 text-center text-foreground">{STATUS_LABEL[o.status] || o.status}</td>
               </tr>
             ))}
           </tbody>
@@ -391,10 +402,10 @@ function formatCompactNumber(value) {
 
 function StatCard({ label, value, icon }) {
   return (
-    <div className="bg-white rounded-xl p-5 border shadow-sm flex justify-between">
+    <div className="bg-card rounded-xl p-5 border border-border shadow-sm flex justify-between">
       <div>
-        <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-2xl font-bold mt-1">{value}</p>
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-2xl font-bold mt-1 text-foreground">{value}</p>
       </div>
       <div className="h-12 w-12 bg-primary/10 text-primary rounded-full flex items-center justify-center">
         {icon ? React.createElement(icon, { className: "h-6 w-6" }) : null}

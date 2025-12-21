@@ -5,7 +5,7 @@ export default function StatCard({ title, value, icon }) {
     <Card>
       <CardContent className="p-5 flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500">{title}</p>
+          <p className="text-sm text-muted-foreground">{title}</p>
           <p className="text-xl font-bold mt-1">{value}</p>
         </div>
         <div className="text-primary">{icon}</div>

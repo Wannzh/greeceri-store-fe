@@ -65,7 +65,7 @@ export default function AdminCategoryListPage() {
 
       {/* TABLE */}
       {loading ? (
-        <div className="bg-white rounded-xl border shadow-sm">
+        <div className="bg-card rounded-xl border shadow-sm">
           <table className="w-full text-sm">
             <tbody>
               {[...Array(4)].map((_, i) => (
@@ -80,13 +80,13 @@ export default function AdminCategoryListPage() {
           </table>
         </div>
       ) : categories.length === 0 ? (
-        <div className="bg-white p-10 rounded-xl text-center text-gray-500">
+        <div className="bg-card p-10 rounded-xl text-center text-muted-foreground">
           Belum ada kategori
         </div>
       ) : (
-        <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100 text-gray-600">
+            <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th className="p-4 text-left">Nama</th>
                 <th className="p-4 text-left">Deskripsi</th>
@@ -98,9 +98,9 @@ export default function AdminCategoryListPage() {
               {categories.map((cat) => {
                 const productCount = cat.productCount ?? 0;
                 return (
-                  <tr key={cat.id} className="border-t hover:bg-gray-50">
+                  <tr key={cat.id} className="border-t hover:bg-muted">
                     <td className="p-4 font-medium">{cat.name}</td>
-                    <td className="p-4 text-gray-600">
+                    <td className="p-4 text-muted-foreground">
                       {cat.description || "-"}
                     </td>
                     <td className="p-4 text-center">

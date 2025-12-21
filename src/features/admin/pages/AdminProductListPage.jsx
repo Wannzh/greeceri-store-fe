@@ -112,7 +112,7 @@ export default function AdminProductListPage() {
 
       {/* ================= TABLE ================= */}
       {loading ? (
-        <div className="bg-white rounded-xl border shadow-sm">
+        <div className="bg-card rounded-xl border shadow-sm">
           <table className="w-full text-sm">
             <tbody>
               {[...Array(6)].map((_, i) => (
@@ -128,13 +128,13 @@ export default function AdminProductListPage() {
           </table>
         </div>
       ) : products.length === 0 ? (
-        <div className="bg-white rounded-xl p-10 text-center text-gray-500">
+        <div className="bg-card rounded-xl p-10 text-center text-muted-foreground">
           {debouncedSearch ? "Tidak ada produk ditemukan" : "Belum ada produk"}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border shadow-sm overflow-x-auto">
+        <div className="bg-card rounded-xl border shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100 text-gray-600">
+            <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 text-left w-16">Gambar</th>
                 <th className="px-4 py-3 text-left">Nama</th>
@@ -148,7 +148,7 @@ export default function AdminProductListPage() {
 
             <tbody>
               {products.map((p) => (
-                <tr key={p.id} className="border-t hover:bg-gray-50">
+                <tr key={p.id} className="border-t hover:bg-muted">
                   <td className="px-4 py-3">
                     {p.imageUrl ? (
                       <img
@@ -157,7 +157,7 @@ export default function AdminProductListPage() {
                         className="h-12 w-12 object-cover rounded"
                       />
                     ) : (
-                      <div className="h-12 w-12 bg-gray-100 rounded flex items-center justify-center">
+                      <div className="h-12 w-12 bg-muted rounded flex items-center justify-center">
                         <Package className="h-5 w-5 text-gray-400" />
                       </div>
                     )}
@@ -167,7 +167,7 @@ export default function AdminProductListPage() {
                     {p.name}
                   </td>
 
-                  <td className="px-4 py-3 text-center text-gray-600">
+                  <td className="px-4 py-3 text-center text-muted-foreground">
                     {p.categoryName || "-"}
                   </td>
 
@@ -175,7 +175,7 @@ export default function AdminProductListPage() {
                     Rp {(p.price || 0).toLocaleString("id-ID")}
                   </td>
 
-                  <td className="px-4 py-3 text-center text-gray-600">
+                  <td className="px-4 py-3 text-center text-muted-foreground">
                     {p.unit || "-"}
                   </td>
 
@@ -212,7 +212,7 @@ export default function AdminProductListPage() {
 
           {/* ================= PAGINATION ================= */}
           <div className="flex items-center justify-between px-4 py-3 border-t">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               Page <b>{page}</b> / {totalPages}
             </div>
 

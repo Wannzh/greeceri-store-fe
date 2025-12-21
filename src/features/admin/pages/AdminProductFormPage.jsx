@@ -186,7 +186,7 @@ export default function AdminProductFormPage() {
       <div className="flex h-[70vh] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-gray-500 text-sm">Memuat data...</p>
+          <p className="text-muted-foreground text-sm">Memuat data...</p>
         </div>
       </div>
     );
@@ -204,7 +204,7 @@ export default function AdminProductFormPage() {
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
             {isEdit ? "Edit Produk" : "Tambah Produk Baru"}
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             {isEdit ? "Perbarui detail dan stok produk" : "Tambahkan item baru ke inventaris toko"}
           </p>
         </div>
@@ -215,14 +215,14 @@ export default function AdminProductFormPage() {
 
         {/* LEFT COLUMN: Image & Meta */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-card rounded-xl border border-border shadow-sm p-6">
             <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" /> Media Produk
             </h3>
 
             <div className="space-y-4">
               {form.imageUrl ? (
-                <div className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-50">
+                <div className="relative group rounded-xl overflow-hidden border border-border aspect-square bg-gray-50">
                   <img
                     src={form.imageUrl}
                     alt="Preview"
@@ -243,17 +243,17 @@ export default function AdminProductFormPage() {
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition-all group"
+                  className="aspect-square border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-muted transition-all group"
                 >
                   {uploading ? (
                     <Loader2 className="h-8 w-8 text-primary animate-spin" />
                   ) : (
                     <>
-                      <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-50 group-hover:text-primary transition-colors">
+                      <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-50 group-hover:text-primary transition-colors">
                         <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">Upload Gambar</span>
-                      <span className="text-xs text-gray-500 mt-1">JPG, PNG, WebP (Max 5MB)</span>
+                      <span className="text-sm font-medium text-foreground">Upload Gambar</span>
+                      <span className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP (Max 5MB)</span>
                     </>
                   )}
                 </div>
@@ -282,7 +282,7 @@ export default function AdminProductFormPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-card rounded-xl border border-border shadow-sm p-6">
             <h3 className="font-semibold text-gray-900 mb-4">Status & Kategori</h3>
             <div className="space-y-4">
               <div className="space-y-2">
@@ -309,7 +309,7 @@ export default function AdminProductFormPage() {
 
         {/* RIGHT COLUMN: Details */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
             <div className="p-6 md:p-8 space-y-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="h-10 w-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center">
@@ -345,7 +345,7 @@ export default function AdminProductFormPage() {
                 <div className="space-y-2">
                   <Label htmlFor="price">Harga (Rp) <span className="text-red-500">*</span></Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">Rp</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">Rp</span>
                     <Input
                       id="price"
                       type="number"
@@ -379,7 +379,7 @@ export default function AdminProductFormPage() {
                     onChange={(val) => handleChange("unit", val)}
                     placeholder="Pilih atau ketik satuan..."
                   />
-                  <p className="text-xs text-gray-500">Pilih dari daftar atau ketik satuan custom lalu tekan Enter</p>
+                  <p className="text-xs text-muted-foreground">Pilih dari daftar atau ketik satuan custom lalu tekan Enter</p>
                 </div>
               </div>
             </div>

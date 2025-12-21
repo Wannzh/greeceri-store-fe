@@ -7,7 +7,7 @@ export default function RecentOrdersTable({ orders }) {
         <h2 className="font-semibold mb-3">Order Terbaru</h2>
 
         {orders.length === 0 ? (
-          <p className="text-sm text-gray-500">Belum ada order</p>
+          <p className="text-sm text-muted-foreground">Belum ada order</p>
         ) : (
           <table className="w-full text-sm">
             <thead>

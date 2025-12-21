@@ -1,8 +1,8 @@
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
-import { ShoppingCart, LogOut, Menu, User, Package, ChevronDown, Search, MapPin, Heart } from "lucide-react";
+import { ShoppingCart, LogOut, Menu, User, Package, ChevronDown, Search, MapPin, Heart, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,11 +65,9 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 flex-shrink-0">
-            <img
-              src={LOGO_URL}
-              alt="Greeceri"
-              className="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover"
-            />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary/20">
+              <Leaf className="h-5 w-5 text-sidebar-primary" />
+            </div>
             <div className="hidden sm:block">
               <span className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Greeceri</span>
               <p className="text-[10px] text-gray-500 -mt-1">Fresh & Quality Products</p>
@@ -190,86 +188,100 @@ export default function Navbar() {
                 </Button>
               </SheetTrigger>
 
-              <SheetContent side="right" className="w-[300px] sm:w-[350px]">
-                <SheetHeader className="mb-6 text-left border-b pb-4">
+              <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 flex flex-col">
+                {/* Header */}
+                <SheetHeader className="p-4 border-b bg-gray-50">
                   <SheetTitle className="flex items-center gap-3">
                     <img src={LOGO_URL} alt="Greeceri" className="h-10 w-10 rounded-lg" />
-                    <span>Menu</span>
+                    <div>
+                      <span className="text-lg font-bold">Greeceri</span>
+                      <p className="text-xs text-gray-500 font-normal">Fresh & Quality Products</p>
+                    </div>
                   </SheetTitle>
+                  <SheetDescription className="sr-only">Menu navigasi mobile</SheetDescription>
                 </SheetHeader>
 
-                {/* Mobile Search - Only show if NOT on product page */}
-                {!isProductPage && (
-                  <form onSubmit={handleSearch} className="mb-6">
-                    <div className="relative">
-                      <Input
-                        type="text"
-                        placeholder="Cari produk..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-4 pr-10"
-                      />
-                      <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0">
-                        <Search className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </form>
-                )}
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  {/* Mobile Search - Only show if NOT on product page */}
+                  {!isProductPage && (
+                    <form onSubmit={handleSearch} className="mb-6">
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          placeholder="Cari produk..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-4 pr-10 h-10"
+                        />
+                        <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0 h-10">
+                          <Search className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </form>
+                  )}
 
-                <div className="flex flex-col gap-6">
+                  {/* User Info Card (if logged in) */}
+                  {isAuthenticated && (
+                    <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl mb-6">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                        {user?.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{user?.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Navigation */}
-                  <div className="flex flex-col space-y-1">
-                    <h4 className="text-xs font-semibold uppercase text-gray-400 tracking-wider mb-2">Menu</h4>
-                    <Link to="/" className="flex items-center gap-3 py-2 text-gray-700 hover:text-primary font-medium">
+                  <div className="space-y-1 mb-6">
+                    <h4 className="text-xs font-semibold uppercase text-gray-400 tracking-wider px-2 mb-2">Menu</h4>
+                    <Link to="/" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg font-medium transition-colors">
                       Beranda
                     </Link>
-                    <Link to="/products" className="flex items-center gap-3 py-2 text-gray-700 hover:text-primary font-medium">
+                    <Link to="/products" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg font-medium transition-colors">
                       Semua Produk
                     </Link>
                   </div>
 
                   {/* Account */}
-                  <div className="flex flex-col space-y-1">
-                    <h4 className="text-xs font-semibold uppercase text-gray-400 tracking-wider mb-2">Akun</h4>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold uppercase text-gray-400 tracking-wider px-2 mb-2">Akun</h4>
 
                     {!isAuthenticated ? (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-3 px-2">
                         <Link to="/login">
-                          <Button variant="outline" className="w-full">Masuk</Button>
+                          <Button variant="outline" className="w-full h-10">Masuk</Button>
                         </Link>
                         <Link to="/register">
-                          <Button className="w-full">Daftar</Button>
+                          <Button className="w-full h-10">Daftar</Button>
                         </Link>
                       </div>
                     ) : (
                       <>
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-3">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-bold">
-                            {user?.name?.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="overflow-hidden">
-                            <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-                          </div>
-                        </div>
-
-                        <Link to="/user/profile" className="flex items-center gap-3 py-2 text-gray-700 hover:text-primary">
+                        <Link to="/user/profile" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">
                           <User size={18} /> Profil Saya
                         </Link>
-                        <Link to="/orders/my" className="flex items-center gap-3 py-2 text-gray-700 hover:text-primary">
+                        <Link to="/orders/my" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">
                           <Package size={18} /> Pesanan Saya
                         </Link>
-                        <Link to="/user/addresses" className="flex items-center gap-3 py-2 text-gray-700 hover:text-primary">
+                        <Link to="/user/addresses" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">
                           <MapPin size={18} /> Alamat Saya
                         </Link>
-
-                        <Button onClick={handleLogout} variant="destructive" className="w-full mt-4">
-                          <LogOut className="mr-2 h-4 w-4" /> Keluar
-                        </Button>
                       </>
                     )}
                   </div>
                 </div>
+
+                {/* Footer - Logout Button (if logged in) */}
+                {isAuthenticated && (
+                  <div className="p-4 border-t bg-gray-50">
+                    <Button onClick={handleLogout} variant="destructive" className="w-full h-11">
+                      <LogOut className="mr-2 h-4 w-4" /> Keluar
+                    </Button>
+                  </div>
+                )}
               </SheetContent>
             </Sheet>
           </div>

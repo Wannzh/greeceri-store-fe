@@ -120,12 +120,13 @@ export default function ProductListPage() {
             </div>
 
             {/* View Toggles & Stats */}
-            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-              <p className="text-sm text-gray-500 hidden sm:block">
-                Menampilkan <span className="font-bold text-gray-900">{filteredProducts.length}</span> produk
+            <div className="flex items-center gap-2 sm:gap-4 w-full md:w-auto justify-between md:justify-end">
+              <p className="text-xs sm:text-sm text-gray-500">
+                <span className="font-bold text-gray-900">{filteredProducts.length}</span> produk
               </p>
 
-              <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+              {/* Grid toggle - hide on very small screens */}
+              <div className="hidden sm:flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
                 <Button
                   variant={gridCols === 3 ? "white" : "ghost"}
                   size="sm"
@@ -147,20 +148,22 @@ export default function ProductListPage() {
           </div>
 
           {/* Category Filter Scroll */}
-          <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="mt-3 md:mt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             <Button
               variant={selectedCategory === "all" ? "default" : "outline"}
-              className={`rounded-full h-9 px-4 text-sm font-medium transition-all ${selectedCategory === "all" ? "shadow-md" : "border-gray-200 text-gray-600 hover:text-primary hover:border-primary/30"}`}
+              size="sm"
+              className={`rounded-full h-8 md:h-9 px-3 md:px-4 text-xs md:text-sm font-medium transition-all flex-shrink-0 ${selectedCategory === "all" ? "shadow-md" : "border-gray-200 text-gray-600 hover:text-primary hover:border-primary/30"}`}
               onClick={() => setSelectedCategory("all")}
             >
               Semua
             </Button>
-            <div className="h-6 w-px bg-gray-200 mx-1 flex-shrink-0"></div>
+            <div className="h-5 w-px bg-gray-200 mx-1 flex-shrink-0"></div>
             {categories.map((cat) => (
               <Button
                 key={cat.id}
                 variant={selectedCategory === String(cat.id) ? "default" : "outline"}
-                className={`rounded-full h-9 px-4 text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === String(cat.id) ? "shadow-md" : "border-gray-200 text-gray-600 hover:text-primary hover:border-primary/30"}`}
+                size="sm"
+                className={`rounded-full h-8 md:h-9 px-3 md:px-4 text-xs md:text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${selectedCategory === String(cat.id) ? "shadow-md" : "border-gray-200 text-gray-600 hover:text-primary hover:border-primary/30"}`}
                 onClick={() => setSelectedCategory(String(cat.id))}
               >
                 {cat.name}
@@ -199,7 +202,7 @@ export default function ProductListPage() {
             </Button>
           </div>
         ) : (
-          <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-${gridCols} gap-4 md:gap-6 lg:gap-8 pb-24`}>
+          <div className={`grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-${gridCols} gap-3 sm:gap-4 md:gap-6 pb-24`}>
             {filteredProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

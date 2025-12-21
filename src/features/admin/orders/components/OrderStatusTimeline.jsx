@@ -24,10 +24,10 @@ export default function OrderStatusTimeline({ currentStatus }) {
         const done = flow.indexOf(currentStatus) >= idx;
         return (
           <div key={s} className="flex items-center gap-3">
-            <div className={`flex items-center justify-center h-8 w-8 rounded-full ${done ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'}`}>
+            <div className={`flex items-center justify-center h-8 w-8 rounded-full ${done ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
               {done ? '✓' : idx + 1}
             </div>
-            <div className={`text-sm font-medium ${done ? 'text-primary' : 'text-gray-500'}`}>{STATUS_LABEL[s]}</div>
+            <div className={`text-sm font-medium ${done ? 'text-primary' : 'text-muted-foreground'}`}>{STATUS_LABEL[s]}</div>
             {idx < flow.length - 1 && (
               <div className={`h-px w-8 ${done ? 'bg-primary' : 'bg-gray-200'}`} />
             )}

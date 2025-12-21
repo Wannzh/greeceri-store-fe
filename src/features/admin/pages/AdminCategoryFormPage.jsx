@@ -77,7 +77,7 @@ export default function AdminCategoryFormPage() {
       <div className="flex h-[70vh] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="text-gray-500 text-sm">Memuat data...</p>
+            <p className="text-muted-foreground text-sm">Memuat data...</p>
         </div>
       </div>
     );
@@ -94,14 +94,14 @@ export default function AdminCategoryFormPage() {
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                 {isEdit ? "Edit Kategori" : "Buat Kategori Baru"}
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
                 {isEdit ? "Perbarui informasi kategori produk" : "Tambahkan kategori baru ke katalog toko"}
             </p>
           </div>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
              <div className="p-6 md:p-8 space-y-6">
                  {/* Icon Decoration */}
                  <div className="flex items-center gap-3 mb-2">
@@ -113,7 +113,7 @@ export default function AdminCategoryFormPage() {
 
                 <form id="category-form" onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="name" className="text-gray-700">Nama Kategori <span className="text-red-500">*</span></Label>
+                        <Label htmlFor="name" className="text-foreground">Nama Kategori <span className="text-red-500">*</span></Label>
                         <Input
                             id="name"
                             value={form.name}
@@ -125,7 +125,7 @@ export default function AdminCategoryFormPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description" className="text-gray-700">Deskripsi</Label>
+                        <Label htmlFor="description" className="text-foreground">Deskripsi</Label>
                         <Textarea
                             id="description"
                             value={form.description}
@@ -133,7 +133,7 @@ export default function AdminCategoryFormPage() {
                             placeholder="Deskripsi singkat kategori ini..."
                             className="min-h-[120px] resize-y"
                         />
-                        <p className="text-xs text-gray-500 text-right">Maksimal 255 karakter</p>
+                        <p className="text-xs text-muted-foreground text-right">Maksimal 255 karakter</p>
                     </div>
                 </form>
             </div>

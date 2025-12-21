@@ -35,6 +35,7 @@ export const adminOrderService = {
 
   updateStatus: async (orderId, status) => {
     try {
+      // Backend expects status in request body
       const res = await api.put(`/admin/orders/${orderId}/status`, { status });
       return res.data?.data ?? null;
     } catch (err) {
