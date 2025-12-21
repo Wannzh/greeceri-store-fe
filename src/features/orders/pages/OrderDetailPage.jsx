@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { orderService } from "@/services/orderService";
 import { DELIVERY_SLOT_LABELS } from "@/services/shippingService";
-import { ArrowLeft, MapPin, Package, CreditCard, Clock, ImageOff, Truck, Calendar, CheckCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, MapPin, Package, CreditCard, Clock, ImageOff, Truck, Calendar, CheckCircle, Loader2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
@@ -11,6 +11,7 @@ export default function OrderDetailPage() {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [confirming, setConfirming] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
 
     useEffect(() => {
         const loadDetail = async () => {
@@ -58,6 +59,25 @@ export default function OrderDetailPage() {
             toast.error(err.response?.data?.message || "Gagal mengkonfirmasi penerimaan.");
         } finally {
             setConfirming(false);
+        }
+    };
+
+    const handleCancelOrder = async () => {
+        if (!window.confirm("Apakah Anda yakin ingin membatalkan pesanan ini?")) {
+            return;
+        }
+        try {
+            setCancelling(true);
+            await orderService.cancelOrder(orderId);
+            toast.success("Pesanan berhasil dibatalkan");
+            // Reload order detail
+            const updatedOrder = await orderService.getOrderDetail(orderId);
+            setOrder(updatedOrder);
+        } catch (err) {
+            console.error("Gagal membatalkan:", err);
+            toast.error(err.response?.data?.message || "Gagal membatalkan pesanan.");
+        } finally {
+            setCancelling(false);
         }
     };
 
@@ -143,13 +163,39 @@ export default function OrderDetailPage() {
                         </div>
 
                         {/* Tombol Bayar jika status PENDING */}
-                        {order.status === "PENDING_PAYMENT" && order.paymentUrl && (
-                            <Button
-                                className="bg-primary hover:bg-primary/90 shadow-md shadow-primary/20"
-                                onClick={() => window.location.href = order.paymentUrl}
-                            >
-                                <CreditCard className="mr-2 h-4 w-4" /> Bayar Sekarang
-                            </Button>
+                        {order.status === "PENDING_PAYMENT" && (
+                            <div className="flex items-center gap-3">
+                                {order.paymentUrl ? (
+                                    <Button
+                                        className="bg-primary hover:bg-primary/90 shadow-md shadow-primary/20"
+                                        onClick={() => window.open(order.paymentUrl, "_blank")}
+                                    >
+                                        <CreditCard className="mr-2 h-4 w-4" /> Bayar Sekarang
+                                    </Button>
+                                ) : (
+                                    <div className="text-center">
+                                        <p className="text-sm text-orange-600 font-medium">Link pembayaran tidak tersedia</p>
+                                        <p className="text-xs text-gray-500">Silakan hubungi admin</p>
+                                    </div>
+                                )}
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                    onClick={handleCancelOrder}
+                                    disabled={cancelling}
+                                >
+                                    {cancelling ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Membatalkan...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <XCircle className="mr-2 h-4 w-4" /> Batalkan
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
                         )}
 
                         {/* Tombol Konfirmasi Diterima jika status SHIPPED */}

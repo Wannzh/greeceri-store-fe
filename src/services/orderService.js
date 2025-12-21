@@ -20,4 +20,9 @@ export const orderService = {
     const res = await api.put(`/orders/my/${orderId}/confirm-delivery`);
     return res.data.data;
   },
+
+  cancelOrder: async (orderId) => {
+    const res = await api.put(`/orders/my/${orderId}/cancel`);
+    return res.data.data;
+  },
 };

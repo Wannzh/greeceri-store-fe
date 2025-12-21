@@ -103,7 +103,17 @@ export default function OrderHistoryPage() {
                                                 Rp {(order.totalPrice ?? 0).toLocaleString("id-ID")}
                                             </p>
                                         </div>
-                                        <ChevronRight className="h-5 w-5 text-gray-300 group-hover:text-primary transition-colors" />
+                                        <div className="flex items-center gap-2">
+                                            {order.status === "PENDING_PAYMENT" && (
+                                                <span
+                                                    className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-md shadow-primary/20 transition-all hover:scale-105"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    Lanjut Bayar
+                                                </span>
+                                            )}
+                                            <ChevronRight className="h-5 w-5 text-gray-300 group-hover:text-primary transition-colors" />
+                                        </div>
                                     </div>
                                 </div>
                             </Link>
