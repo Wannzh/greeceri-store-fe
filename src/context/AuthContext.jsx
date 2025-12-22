@@ -70,11 +70,51 @@ export function AuthProvider({ children }) {
         }
     };
 
+    // GOOGLE LOGIN
+    const googleLogin = async (idToken) => {
+        try {
+            const res = await api.post("/auth/google", { idToken });
+
+            const data = res.data.data;
+
+            const accessToken = data.accessToken;
+            const refreshToken = data.refreshToken;
+
+            const userData = {
+                id: data.id,
+                name: data.name,
+                email: data.email,
+                role: data.role,
+            };
+
+            setUser(userData);
+            setToken(accessToken);
+
+            localStorage.setItem("access_token", accessToken);
+            localStorage.setItem("refresh_token", refreshToken);
+            localStorage.setItem("user", JSON.stringify(userData));
+
+            // Redirect by role
+            if (userData.role === "ADMIN") {
+                navigate("/admin", { replace: true });
+            } else {
+                navigate("/", { replace: true });
+            }
+
+            return { success: true };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || "Google login failed",
+            };
+        }
+    };
+
     // LOGOUT
     const logout = () => {
         setUser(null);
         setToken(null);
-        
+
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         localStorage.removeItem("user");
@@ -89,6 +129,7 @@ export function AuthProvider({ children }) {
                 token,
                 loading,
                 login,
+                googleLogin,
                 logout,
                 isAuthenticated: !!user,
             }}
