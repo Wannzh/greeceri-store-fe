@@ -20,79 +20,73 @@ export default function ProductCard({ product }) {
   const isOutOfStock = product.stock === 0;
 
   return (
-    <div className="group bg-white rounded-xl border shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300">
-      {/* Image Container */}
-      <div className="relative overflow-hidden">
-        <Link to={`/products/${product.id}`}>
+    <div className="group bg-slate-100 hover:bg-slate-100/40 transition-colors duration-500 p-4 relative">
+      <Link to={`/products/${product.id}`} className="block">
+        {/* Image Container */}
+        <div className="relative mb-4">
           <img
             src={product.imageUrl || "/placeholder-product.png"}
             alt={product.name}
-            className="h-32 sm:h-40 md:h-48 w-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="h-32 sm:h-40 w-full object-contain mx-auto mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
           />
-        </Link>
 
-        {/* Stock Badge */}
-        {isOutOfStock && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <Badge variant="destructive" className="text-xs sm:text-sm">
-              Stok Habis
-            </Badge>
-          </div>
-        )}
+          {/* Stock Badge - Circular Overlay */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="rounded-full bg-black/70 text-white w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+                <span>Sold</span>
+                <span>Out</span>
+              </div>
+            </div>
+          )}
 
-        {/* Category Badge */}
-        {product.categoryName && (
-          <Badge
-            variant="secondary"
-            className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-white/90 text-gray-700 text-[10px] sm:text-xs"
-          >
-            {product.categoryName}
-          </Badge>
-        )}
-
-        {/* Quick View Button - hide on mobile */}
-        <Link
-          to={`/products/${product.id}`}
-          className="absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-primary hover:text-white"
-        >
-          <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Link>
-      </div>
-
-      {/* Content */}
-      <div className="p-2.5 sm:p-4 space-y-2 sm:space-y-3">
-        {/* Product Name */}
-        <Link to={`/products/${product.id}`}>
-          <h3 className="font-semibold text-gray-800 text-sm sm:text-base line-clamp-2 hover:text-primary transition-colors min-h-[36px] sm:min-h-[48px]">
-            {product.name}
-          </h3>
-        </Link>
-
-        {/* Price & Stock */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-          <p className="text-sm sm:text-lg font-bold text-primary">
-            Rp {product.price?.toLocaleString("id-ID")}
-            {product.unit && <span className="text-xs sm:text-sm font-normal text-gray-500">/{product.unit}</span>}
-          </p>
-          {!isOutOfStock && (
-            <p className="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1">
-              <Package className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-              {product.stock} tersedia
-            </p>
+          {/* Category - Minimalist floating text */}
+          {product.categoryName && (
+            <span className="absolute top-0 left-0 text-[10px] tracking-widest uppercase text-gray-500 font-medium">
+              {product.categoryName}
+            </span>
           )}
         </div>
 
-        {/* Add to Cart Button */}
-        <Button
-          className="w-full gap-1 sm:gap-2 h-8 sm:h-10 text-xs sm:text-sm"
+        {/* Content */}
+        <div className="space-y-2 text-center pb-6">
+          {/* Product Name */}
+          <h3 className="font-medium text-gray-900 text-xs sm:text-sm leading-relaxed tracking-wide line-clamp-2 hover:text-black transition-colors">
+            {product.name}
+          </h3>
+
+          {/* Price */}
+          <div className="flex flex-col items-center justify-center gap-0.5">
+            <p className="text-sm sm:text-base font-medium text-gray-900 tracking-wide">
+              Rp {product.price?.toLocaleString("id-ID")}
+              {product.unit && <span className="text-xs font-normal text-gray-500 ml-1">/{product.unit}</span>}
+            </p>
+
+            {/* Stock Display - Restored */}
+            {!isOutOfStock && (
+              <p className="text-[10px] text-gray-400 tracking-wide flex items-center gap-1">
+                <Package className="h-3 w-3" />
+                {product.stock} tersedia
+              </p>
+            )}
+          </div>
+        </div>
+      </Link>
+
+      {/* Actions - Cart Icon at Bottom Right */}
+      <div className="absolute bottom-3 right-3">
+        <button
+          onClick={(e) => {
+            e.preventDefault(); // Prevent Link navigation
+            handleAddToCart();
+          }}
           disabled={isOutOfStock}
-          onClick={handleAddToCart}
-          variant={isOutOfStock ? "outline" : "default"}
+          className={`text-gray-400 hover:text-primary transition-all duration-300 p-2 rounded-full hover:bg-white active:scale-95 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}`}
+          aria-label="Add to cart"
+          title="Add to cart"
         >
-          <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          <span className="hidden sm:inline">{isOutOfStock ? "Stok Habis" : "+ Keranjang"}</span>
-          <span className="sm:hidden">{isOutOfStock ? "Habis" : "Tambah"}</span>
-        </Button>
+          <ShoppingCart className="h-5 w-5" strokeWidth={1.5} />
+        </button>
       </div>
     </div>
   );

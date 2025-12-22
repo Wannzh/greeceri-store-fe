@@ -65,8 +65,8 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 flex-shrink-0">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary/20">
-              <Leaf className="h-5 w-5 text-sidebar-primary" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary">
+              <Leaf className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
               <span className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Greeceri</span>

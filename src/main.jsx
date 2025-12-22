@@ -7,10 +7,12 @@ import AppRouter from "./router/index.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from './context/CartContext';
 import { Toaster } from 'react-hot-toast';
+import ScrollToTop from './components/ScrollToTop';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <CartProvider>
           <AppRouter />

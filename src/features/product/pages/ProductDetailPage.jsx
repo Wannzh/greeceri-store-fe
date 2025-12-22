@@ -4,7 +4,7 @@ import { productService } from "@/services/productService";
 import { Button } from "@/components/ui/button";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import { useCart } from "@/context/CartContext";
-import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, Package, ShoppingCart } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, Package, ShoppingCart, Minus, Plus, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function ProductDetailPage() {
@@ -14,6 +14,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     loadProduct();
@@ -51,12 +52,12 @@ export default function ProductDetailPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white shadow-sm border border-gray-100 overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0">
 
             {/* Left: Image */}
-            <div className="p-6 lg:p-10 bg-gray-50 flex items-center justify-center">
-              <div className="relative w-full aspect-square max-w-[500px] bg-white rounded-2xl shadow-sm p-4">
+            <div className="p-2 lg:p-6 bg-gray-50 flex items-center justify-center">
+              <div className="relative w-full aspect-square max-w-[500px] bg-white shadow-sm p-4">
                 <img
                   src={product.imageUrl}
                   alt={product.name}
@@ -112,15 +113,41 @@ export default function ProductDetailPage() {
 
               {/* Action Bar */}
               <div className="pt-8 mt-auto">
-                <Button
-                  size="lg"
-                  className="w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
-                  disabled={isOutOfStock}
-                  onClick={() => addToCart(product.id, 1)}
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  {isOutOfStock ? "Stok Habis" : "Tambah ke Keranjang"}
-                </Button>
+                {/* Quantity & Add to Cart */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-white">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="p-3 hover:bg-gray-100 transition-colors text-gray-600 disabled:opacity-50"
+                      disabled={quantity <= 1}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <span className="w-12 text-center font-medium text-gray-900">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="p-3 hover:bg-gray-100 transition-colors text-gray-600"
+                      disabled={isOutOfStock}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="flex-1 rounded-xl font-bold shadow-lg shadow-primary/20"
+                    onClick={() => addToCart(product.id, quantity)}
+                    disabled={isOutOfStock}
+                  >
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    {isOutOfStock ? "Stok Habis" : "Tambah ke Keranjang"}
+                  </Button>
+
+                  <Button variant="outline" size="lg" className="rounded-xl border-gray-200 hover:bg-gray-50 hover:text-red-500 transition-colors">
+                    <Heart className="h-5 w-5" />
+                  </Button>
+                </div>
                 <p className="text-center text-xs text-gray-400 mt-4">
                   Harga sudah termasuk pajak. Ongkos kirim dihitung saat checkout.
                 </p>
