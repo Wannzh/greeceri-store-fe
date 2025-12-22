@@ -167,6 +167,7 @@
     @apply font-sans;
     font-family: 'Lexend', sans-serif
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -202,4 +203,30 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Global cursor pointer for interactive elements */
+button,
+[role="button"],
+[type="button"],
+[type="submit"],
+[type="reset"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][disabled],
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* Ensure all clickable elements have pointer cursor */
+a,
+label[for],
+select,
+input[type="checkbox"],
+input[type="radio"],
+.clickable {
+  cursor: pointer;
 }

@@ -1,24 +1,33 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { productService } from "@/services/productService";
+import { wishlistService } from "@/services/wishlistService";
 import { Button } from "@/components/ui/button";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import { useCart } from "@/context/CartContext";
-import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, Package, ShoppingCart, Minus, Plus, Heart } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, Package, ShoppingCart, Minus, Plus, Heart, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import toast from "react-hot-toast";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     loadProduct();
-  }, [id]);
+    if (isAuthenticated) {
+      checkWishlist();
+    }
+  }, [id, isAuthenticated]);
 
   const loadProduct = async () => {
     try {
@@ -28,6 +37,50 @@ export default function ProductDetailPage() {
       setError("Produk tidak ditemukan");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkWishlist = async () => {
+    try {
+      const result = await wishlistService.check(id);
+      // Handle both boolean and object response
+      setIsWishlisted(typeof result === 'boolean' ? result : result?.inWishlist || false);
+    } catch (err) {
+      console.error("Failed to check wishlist:", err);
+    }
+  };
+
+  const handleToggleWishlist = async () => {
+    if (!isAuthenticated) {
+      toast.error("Silakan login untuk menambahkan ke wishlist");
+      return;
+    }
+
+    try {
+      setWishlistLoading(true);
+      if (isWishlisted) {
+        await wishlistService.remove(id);
+        setIsWishlisted(false);
+        toast.success("Dihapus dari wishlist");
+      } else {
+        await wishlistService.add(id);
+        setIsWishlisted(true);
+        toast.success("Ditambahkan ke wishlist");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Gagal update wishlist");
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    const result = await addToCart(product.id, quantity);
+    if (result.success) {
+      toast.success(`${product.name} ditambahkan ke keranjang!`);
+      setQuantity(1); // Reset quantity after adding
+    } else {
+      toast.error(result.message || "Gagal menambahkan ke keranjang");
     }
   };
 
@@ -118,7 +171,7 @@ export default function ProductDetailPage() {
                   <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-white">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-3 hover:bg-gray-100 transition-colors text-gray-600 disabled:opacity-50"
+                      className="p-3 hover:bg-gray-100 transition-colors text-gray-600 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                       disabled={quantity <= 1}
                     >
                       <Minus className="h-4 w-4" />
@@ -126,7 +179,7 @@ export default function ProductDetailPage() {
                     <span className="w-12 text-center font-medium text-gray-900">{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="p-3 hover:bg-gray-100 transition-colors text-gray-600"
+                      className="p-3 hover:bg-gray-100 transition-colors text-gray-600 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={isOutOfStock}
                     >
                       <Plus className="h-4 w-4" />
@@ -137,15 +190,28 @@ export default function ProductDetailPage() {
                     variant="default"
                     size="lg"
                     className="flex-1 rounded-xl font-bold shadow-lg shadow-primary/20"
-                    onClick={() => addToCart(product.id, quantity)}
+                    onClick={handleAddToCart}
                     disabled={isOutOfStock}
                   >
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     {isOutOfStock ? "Stok Habis" : "Tambah ke Keranjang"}
                   </Button>
 
-                  <Button variant="outline" size="lg" className="rounded-xl border-gray-200 hover:bg-gray-50 hover:text-red-500 transition-colors">
-                    <Heart className="h-5 w-5" />
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className={`rounded-xl border-gray-200 transition-colors cursor-pointer ${isWishlisted
+                        ? "bg-red-50 border-red-200 text-red-500 hover:bg-red-100"
+                        : "hover:bg-gray-50 hover:text-red-500"
+                      }`}
+                    onClick={handleToggleWishlist}
+                    disabled={wishlistLoading}
+                  >
+                    {wishlistLoading ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Heart className={`h-5 w-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
+                    )}
                   </Button>
                 </div>
                 <p className="text-center text-xs text-gray-400 mt-4">

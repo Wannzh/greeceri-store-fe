@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
-import { useState } from "react";
+import { wishlistService } from "@/services/wishlistService";
+import { useState, useEffect } from "react";
 
 const LOGO_URL = "https://res.cloudinary.com/dimtuwrap/image/upload/v1762286348/Icon_Greeceri_nrrl2u.jpg";
 
@@ -21,8 +22,26 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { cart } = useCart();
   const navigate = useNavigate();
-  const location = useLocation(); // Hook untuk cek halaman aktif
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [wishlistCount, setWishlistCount] = useState(0);
+
+  // Fetch wishlist count on auth change or location change
+  useEffect(() => {
+    const fetchWishlistCount = async () => {
+      if (isAuthenticated && user?.role !== "ADMIN") {
+        try {
+          const count = await wishlistService.getCount();
+          setWishlistCount(typeof count === 'number' ? count : 0);
+        } catch (err) {
+          setWishlistCount(0);
+        }
+      } else {
+        setWishlistCount(0);
+      }
+    };
+    fetchWishlistCount();
+  }, [isAuthenticated, user, location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -103,16 +122,31 @@ export default function Navbar() {
 
             {/* Cart - Hidden for Admin */}
             {user?.role !== "ADMIN" && (
-              <Link to="/cart" className="relative group">
-                <Button variant="ghost" size="icon" className="relative hover:bg-gray-100 h-10 w-10">
-                  <ShoppingCart className="h-5 w-5 text-gray-700 group-hover:text-primary transition-colors" />
-                  {cart.items.length > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-in zoom-in">
-                      {cart.items.length}
-                    </span>
-                  )}
-                </Button>
-              </Link>
+              <>
+                {/* Wishlist */}
+                <Link to="/wishlist" className="relative group">
+                  <Button variant="ghost" size="icon" className="relative hover:bg-gray-100 h-10 w-10">
+                    <Heart className="h-5 w-5 text-gray-700 group-hover:text-red-500 transition-colors" />
+                    {wishlistCount > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-in zoom-in">
+                        {wishlistCount > 99 ? '99+' : wishlistCount}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+
+                {/* Cart */}
+                <Link to="/cart" className="relative group">
+                  <Button variant="ghost" size="icon" className="relative hover:bg-gray-100 h-10 w-10">
+                    <ShoppingCart className="h-5 w-5 text-gray-700 group-hover:text-primary transition-colors" />
+                    {cart.items.length > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-in zoom-in">
+                        {cart.items.length}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+              </>
             )}
 
             {/* Auth Buttons / User Menu - Desktop */}

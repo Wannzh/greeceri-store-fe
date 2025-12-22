@@ -3,6 +3,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function CartPage() {
   // Menggunakan Context (yang sekarang memanggil Service)
@@ -87,11 +88,21 @@ export default function CartPage() {
     setIsModalOpen(true);
   };
 
-  const handleDecreaseQuantity = (item) => {
+  const handleDecreaseQuantity = async (item) => {
     if (item.quantity > 1) {
-      updateQuantity(item.productId, item.quantity - 1);
+      const result = await updateQuantity(item.cartItemId, item.quantity - 1);
+      if (!result.success) {
+        toast.error(result.message);
+      }
     } else {
       openDeleteModal(item);
+    }
+  };
+
+  const handleIncreaseQuantity = async (item) => {
+    const result = await updateQuantity(item.cartItemId, item.quantity + 1);
+    if (!result.success) {
+      toast.error(result.message || "Stok tidak mencukupi");
     }
   };
 
@@ -225,7 +236,7 @@ export default function CartPage() {
                     </div>
                     <button
                       className="flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors"
-                      onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                      onClick={() => handleIncreaseQuantity(item)}
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </button>

@@ -16,6 +16,12 @@ export const cartService = {
     return response.data.data;
   },
 
+  // Update quantity item yang sudah ada di cart
+  updateItemQuantity: async (cartItemId, quantity) => {
+    const response = await api.put(`/cart/item/${cartItemId}?quantity=${quantity}`);
+    return response.data.data;
+  },
+
   // Hapus item berdasarkan CartItemId
   removeItem: async (cartItemId) => {
     const response = await api.delete(`/cart/item/${cartItemId}`);

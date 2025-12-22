@@ -33,6 +33,9 @@ import PaymentResultPage from "@/features/checkout/pages/PaymentResultPage";
 import OrderHistoryPage from "@/features/orders/pages/OrderHistoryPage";
 import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
 
+/* Wishlist */
+import WishlistPage from "@/features/wishlist/pages/WishlistPage";
+
 /* User */
 import ProfilePage from "@/features/user/pages/ProfilePage";
 import EditProfilePage from "@/features/user/pages/EditPage";
@@ -110,6 +113,16 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <OrderDetailPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Wishlist */}
+                <Route
+                    path="/wishlist"
+                    element={
+                        <ProtectedRoute>
+                            <WishlistPage />
                         </ProtectedRoute>
                     }
                 />

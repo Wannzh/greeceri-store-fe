@@ -48,12 +48,15 @@ export function CartProvider({ children }) {
     }
   };
 
-  const updateQuantity = async (productId, quantity) => {
+  const updateQuantity = async (cartItemId, quantity) => {
     try {
-      const updatedCart = await cartService.addItem(productId, quantity);
+      const updatedCart = await cartService.updateItemQuantity(cartItemId, quantity);
       setCart(updatedCart);
+      return { success: true };
     } catch (err) {
+      const msg = err.response?.data?.message || "Gagal update quantity";
       console.error("Gagal update quantity:", err);
+      return { success: false, message: msg };
     }
   };
 
