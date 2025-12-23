@@ -231,22 +231,28 @@ function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchFeatured = async () => {
+    const fetchBestSellers = async () => {
       try {
-        const res = await api.get("/products", { params: { page: 0, size: 4 } });
+        const res = await api.get("/products/best-sellers");
         if (res.data.success) {
-          // Handle paginated response - content is the array
-          const data = res.data.data;
-          setProducts(data.content || data.slice?.(0, 4) || []);
+          // Map best-sellers response to ProductCard expected format
+          const mapped = (res.data.data || []).map(item => ({
+            id: item.productId,
+            name: item.productName,
+            imageUrl: item.imageUrl,
+            price: item.price,
+            totalSold: item.totalSold,
+          }));
+          setProducts(mapped);
         }
       } catch (err) {
-        console.error("Gagal memuat produk unggulan", err);
+        console.error("Gagal memuat produk terlaris", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFeatured();
+    fetchBestSellers();
   }, []);
 
   return (
@@ -283,7 +289,7 @@ function FeaturedProducts() {
 
         {!loading && products.length === 0 && (
           <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-gray-200">
-            <p className="text-gray-500 font-medium">Belum ada produk unggulan saat ini.</p>
+            <p className="text-gray-500 font-medium">Belum ada produk terlaris minggu ini.</p>
           </div>
         )}
       </div>
