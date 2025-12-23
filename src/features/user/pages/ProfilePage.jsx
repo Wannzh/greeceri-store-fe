@@ -80,10 +80,10 @@ export default function ProfilePage() {
     return (
         <div className="min-h-screen bg-gray-50 py-10">
             <div className="container mx-auto max-w-5xl px-4 space-y-8">
-                
+
                 {/* HEADLINE */}
                 <div className="flex items-center justify-between">
-                     <h1 className="text-3xl font-bold text-gray-900">Akun Saya</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Akun Saya</h1>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6">
@@ -91,15 +91,23 @@ export default function ProfilePage() {
                     <div className="md:col-span-1 space-y-6">
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-br from-primary to-green-600"></div>
-                            
+
                             <div className="relative mt-8 mb-4">
                                 <div className="h-24 w-24 mx-auto rounded-full bg-white p-1 shadow-lg">
-                                    <div className="h-full w-full rounded-full bg-gray-100 flex items-center justify-center text-3xl font-bold text-gray-600">
-                                         {profile.name?.charAt(0).toUpperCase()}
-                                    </div>
+                                    {profile.profileImageUrl ? (
+                                        <img
+                                            src={profile.profileImageUrl}
+                                            alt={profile.name}
+                                            className="h-full w-full rounded-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="h-full w-full rounded-full bg-gray-100 flex items-center justify-center text-3xl font-bold text-gray-600">
+                                            {profile.name?.charAt(0).toUpperCase()}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                            
+
                             <h2 className="text-xl font-bold text-gray-900">{profile.name}</h2>
                             <p className="text-sm text-gray-500 mb-6">{profile.email}</p>
 
@@ -109,9 +117,9 @@ export default function ProfilePage() {
                                 </Button>
                             </Link>
                         </div>
-                        
+
                         {/* Quick Stats Grid Mobile/Desktop */}
-                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Aktivitas</h3>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
@@ -141,30 +149,30 @@ export default function ProfilePage() {
 
                     {/* RIGHT COL: DETAILS & ACTIONS */}
                     <div className="md:col-span-2 space-y-6">
-                        
+
                         {/* Detail Info */}
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                             <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                                 <UserCircle className="text-primary h-5 w-5" /> Informasi Pribadi
                             </h3>
                             <div className="grid sm:grid-cols-2 gap-y-6 gap-x-12">
                                 <InfoItem label="Nama Lengkap" value={profile.name} icon={<User size={16} />} />
                                 <InfoItem label="Email" value={profile.email} icon={<Mail size={16} />} />
                                 <InfoItem label="Nomor Telepon" value={profile.phoneNumber || "-"} icon={<Phone size={16} />} />
-                                <InfoItem 
-                                    label="Tanggal Lahir" 
-                                    value={profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }) : "-"} 
-                                    icon={<Calendar size={16} />} 
+                                <InfoItem
+                                    label="Tanggal Lahir"
+                                    value={profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }) : "-"}
+                                    icon={<Calendar size={16} />}
                                 />
-                                <InfoItem 
-                                    label="Member Sejak" 
-                                    value={formatMemberSince(profile.joinedAt)} 
-                                    icon={<Calendar size={16} />} 
+                                <InfoItem
+                                    label="Member Sejak"
+                                    value={formatMemberSince(profile.joinedAt)}
+                                    icon={<Calendar size={16} />}
                                 />
                             </div>
                         </div>
 
-                         {/* Quick Actions */}
+                        {/* Quick Actions */}
                         <div className="grid sm:grid-cols-2 gap-4">
                             <Link to="/user/addresses" className="group p-5 bg-white rounded-2xl border border-gray-200 shadow-sm hover:border-primary/50 hover:shadow-md transition-all flex items-center justify-between">
                                 <div className="flex items-center gap-4">
@@ -179,7 +187,7 @@ export default function ProfilePage() {
                                 <ChevronRight className="text-gray-300 group-hover:text-primary" />
                             </Link>
 
-                             <Link to="/user/change-password" class="group p-5 bg-white rounded-2xl border border-gray-200 shadow-sm hover:border-primary/50 hover:shadow-md transition-all flex items-center justify-between">
+                            <Link to="/user/change-password" class="group p-5 bg-white rounded-2xl border border-gray-200 shadow-sm hover:border-primary/50 hover:shadow-md transition-all flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className="h-10 w-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                         <Lock size={20} />

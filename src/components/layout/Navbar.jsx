@@ -164,9 +164,17 @@ export default function Navbar() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2 pl-2 pr-3 rounded-full border hover:bg-gray-50 h-10 transition-all">
-                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                        {user?.name?.charAt(0).toUpperCase()}
-                      </div>
+                      {user?.profileImageUrl ? (
+                        <img
+                          src={user.profileImageUrl}
+                          alt={user.name}
+                          className="h-7 w-7 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                          {user?.name?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                       <span className="text-sm font-medium text-gray-700 max-w-[100px] truncate">
                         {user?.name?.split(" ")[0]}
                       </span>

@@ -45,6 +45,7 @@ export function AuthProvider({ children }) {
                 name: data.name,
                 email: data.email,
                 role: data.role,
+                profileImageUrl: data.profileImageUrl || null,
             };
 
             setUser(userData);
@@ -85,6 +86,7 @@ export function AuthProvider({ children }) {
                 name: data.name,
                 email: data.email,
                 role: data.role,
+                profileImageUrl: data.profileImageUrl || null,
             };
 
             setUser(userData);
