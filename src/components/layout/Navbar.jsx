@@ -188,11 +188,6 @@ export default function Navbar() {
                     <Link to="/wishlist">
                       <DropdownMenuItem className="cursor-pointer">
                         <Heart className="mr-2 h-4 w-4" /> Wishlist
-                        {wishlistCount > 0 && (
-                          <span className="ml-auto text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
-                            {wishlistCount > 99 ? '99+' : wishlistCount}
-                          </span>
-                        )}
                       </DropdownMenuItem>
                     </Link>
 
