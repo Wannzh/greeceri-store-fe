@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 
 const menuItems = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
+  { label: "Dasbor", icon: LayoutDashboard, path: "/admin" },
   { label: "Produk", icon: Package, path: "/admin/products" },
   { label: "Kategori", icon: Tags, path: "/admin/categories" },
   { label: "Pesanan", icon: ShoppingCart, path: "/admin/orders" },

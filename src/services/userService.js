@@ -1,3 +1,13 @@
+/**
+ * User Service
+ * =============
+ * Menangani operasi profil user untuk user yang login.
+ * 
+ * Method:
+ * - getProfile: Ambil data profil user saat ini
+ * - updateProfile: Update profil user (nama, telepon, gender, tanggal lahir)
+ * - changePassword: Ubah password user
+ */
 import api from "@/lib/axios";
 
 export const userService = {

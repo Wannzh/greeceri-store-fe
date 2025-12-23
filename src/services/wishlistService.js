@@ -1,3 +1,15 @@
+/**
+ * Wishlist Service
+ * =================
+ * Menangani fungsionalitas wishlist (favorit) untuk user yang login.
+ * 
+ * Method:
+ * - getAll: Ambil semua item wishlist dengan detail produk
+ * - add: Tambah produk ke wishlist
+ * - remove: Hapus produk dari wishlist
+ * - check: Cek apakah produk ada di wishlist user
+ * - getCount: Ambil total jumlah item wishlist (untuk tampilan badge)
+ */
 import api from "@/lib/axios";
 
 export const wishlistService = {

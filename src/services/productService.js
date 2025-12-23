@@ -1,3 +1,20 @@
+/**
+ * Product Service
+ * ================
+ * Menangani semua API call terkait produk untuk user publik dan admin.
+ * 
+ * Method Publik:
+ * - getAll: Ambil produk dengan pagination dan filter kategori/keyword
+ * - getById: Ambil detail produk berdasarkan ID
+ * 
+ * Method Admin:
+ * - getAdminProducts: Ambil produk dengan pagination untuk panel admin
+ * - getAdminProductById: Ambil produk dengan detail lengkap untuk edit
+ * - uploadImage: Upload gambar produk ke Cloudinary
+ * - createProduct: Buat produk baru
+ * - updateProduct: Update produk yang sudah ada
+ * - deleteProduct: Hapus produk berdasarkan ID
+ */
 import api from "@/lib/axios";
 
 export const productService = {

@@ -1,6 +1,24 @@
+/**
+ * Auth Context
+ * =============
+ * Menyediakan manajemen state autentikasi global untuk aplikasi.
+ * 
+ * State:
+ * - user: Data user yang login (id, name, email, role, profileImageUrl)
+ * - token: JWT access token untuk autentikasi API
+ * - loading: Status loading saat pengecekan autentikasi awal
+ * - isAuthenticated: Boolean yang menunjukkan apakah user sudah login
+ * 
+ * Method:
+ * - login: Autentikasi user dengan email/password
+ * - googleLogin: Autentikasi user dengan Google OAuth
+ * - logout: Hapus state autentikasi dan redirect ke login
+ * 
+ * Penggunaan: Bungkus app dengan AuthProvider, gunakan hook useAuth() untuk akses state/method
+ */
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "@/lib/axios";
+import { authService } from "@/services/authService";
 
 const AuthContext = createContext();
 
@@ -30,32 +48,33 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }, []);
 
+    // Menyimpan data autentikasi ke state dan localStorage
+    const saveAuthData = (data) => {
+        const userData = {
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            role: data.role,
+            profileImageUrl: data.profileImageUrl || null,
+        };
+
+        setUser(userData);
+        setToken(data.accessToken);
+
+        localStorage.setItem("access_token", data.accessToken);
+        localStorage.setItem("refresh_token", data.refreshToken);
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        return userData;
+    };
+
     // LOGIN
     const login = async (email, password) => {
         try {
-            const res = await api.post("/auth/login", { email, password });
+            const data = await authService.login(email, password);
+            const userData = saveAuthData(data);
 
-            const data = res.data.data;
-
-            const accessToken = data.accessToken;
-            const refreshToken = data.refreshToken;
-
-            const userData = {
-                id: data.id,
-                name: data.name,
-                email: data.email,
-                role: data.role,
-                profileImageUrl: data.profileImageUrl || null,
-            };
-
-            setUser(userData);
-            setToken(accessToken);
-
-            localStorage.setItem("access_token", accessToken);
-            localStorage.setItem("refresh_token", refreshToken);
-            localStorage.setItem("user", JSON.stringify(userData))
-
-            // Redirect by role
+            // Redirect berdasarkan role
             if (userData.role === "ADMIN") {
                 navigate("/admin", { replace: true });
             } else {
@@ -66,7 +85,7 @@ export function AuthProvider({ children }) {
         } catch (error) {
             return {
                 success: false,
-                message: error.response?.data?.message || "Login failed",
+                message: error.response?.data?.message || "Login gagal",
             };
         }
     };
@@ -74,29 +93,10 @@ export function AuthProvider({ children }) {
     // GOOGLE LOGIN
     const googleLogin = async (idToken) => {
         try {
-            const res = await api.post("/auth/google", { idToken });
+            const data = await authService.googleLogin(idToken);
+            const userData = saveAuthData(data);
 
-            const data = res.data.data;
-
-            const accessToken = data.accessToken;
-            const refreshToken = data.refreshToken;
-
-            const userData = {
-                id: data.id,
-                name: data.name,
-                email: data.email,
-                role: data.role,
-                profileImageUrl: data.profileImageUrl || null,
-            };
-
-            setUser(userData);
-            setToken(accessToken);
-
-            localStorage.setItem("access_token", accessToken);
-            localStorage.setItem("refresh_token", refreshToken);
-            localStorage.setItem("user", JSON.stringify(userData));
-
-            // Redirect by role
+            // Redirect berdasarkan role
             if (userData.role === "ADMIN") {
                 navigate("/admin", { replace: true });
             } else {
@@ -107,7 +107,7 @@ export function AuthProvider({ children }) {
         } catch (error) {
             return {
                 success: false,
-                message: error.response?.data?.message || "Google login failed",
+                message: error.response?.data?.message || "Google login gagal",
             };
         }
     };

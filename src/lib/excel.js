@@ -1,10 +1,16 @@
 /**
- * Simple Excel export helpers for client-side (no external deps)
- * Uses HTML table format which Excel can open
+ * Excel Helper
+ * =============
+ * Helper untuk export data ke format Excel (HTML table) tanpa library eksternal.
+ * 
+ * Method:
+ * - buildExcelContent: Bangun HTML table yang bisa dibuka Excel
+ * - downloadExcel: Download konten sebagai file Excel
+ * - exportObjectsToExcel: Export array object ke file Excel
  */
 
 export function buildExcelContent(rows = [], headers = []) {
-  // Build HTML table that Excel can open
+  // Build HTML table yang bisa dibuka Excel
   let html = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" 
           xmlns:x="urn:schemas-microsoft-com:office:excel" 
@@ -66,18 +72,16 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+// Download menggunakan data URL tanpa createElement/appendChild
 export function downloadExcel(content, filename = `export-${new Date().toISOString()}.xls`) {
-  const blob = new Blob([content], { 
-    type: 'application/vnd.ms-excel;charset=utf-8;' 
-  });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  const encodedContent = encodeURIComponent(content);
+  const dataUrl = `data:application/vnd.ms-excel;charset=utf-8,${encodedContent}`;
+  
+  // Gunakan window.open untuk trigger download
+  const newWindow = window.open(dataUrl, '_blank');
+  if (newWindow) {
+    newWindow.document.title = filename;
+  }
 }
 
 export function exportObjectsToExcel(rows = [], columns = [], filename) {

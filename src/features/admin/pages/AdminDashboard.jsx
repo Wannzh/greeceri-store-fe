@@ -400,7 +400,7 @@ function formatCompactNumber(value) {
   }
 }
 
-function StatCard({ label, value, icon }) {
+function StatCard({ label, value, icon: Icon }) {
   return (
     <div className="bg-card rounded-xl p-5 border border-border shadow-sm flex justify-between">
       <div>
@@ -408,7 +408,7 @@ function StatCard({ label, value, icon }) {
         <p className="text-2xl font-bold mt-1 text-foreground">{value}</p>
       </div>
       <div className="h-12 w-12 bg-primary/10 text-primary rounded-full flex items-center justify-center">
-        {icon ? React.createElement(icon, { className: "h-6 w-6" }) : null}
+        {Icon && <Icon className="h-6 w-6" />}
       </div>
     </div>
   );

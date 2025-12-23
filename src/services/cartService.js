@@ -1,3 +1,15 @@
+/**
+ * Cart Service
+ * =============
+ * Menangani operasi keranjang belanja untuk user yang login.
+ * 
+ * Method:
+ * - getCart: Ambil isi keranjang saat ini
+ * - addItem: Tambah produk ke keranjang atau tambah jumlah
+ * - updateItemQuantity: Update jumlah item keranjang tertentu
+ * - removeItem: Hapus item dari keranjang berdasarkan cartItemId
+ * - clearCart: Hapus semua item dari keranjang
+ */
 import api from "@/lib/axios";
 
 export const cartService = {

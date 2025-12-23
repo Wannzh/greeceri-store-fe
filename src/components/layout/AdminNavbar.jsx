@@ -286,10 +286,6 @@ export default function AdminNavbar() {
                         <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/admin/settings")}>
-                            <User className="mr-2 h-4 w-4" />
-                            Profil
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/admin/settings")}>
                             <Settings className="mr-2 h-4 w-4" />
                             Pengaturan
                         </DropdownMenuItem>

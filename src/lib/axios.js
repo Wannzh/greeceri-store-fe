@@ -1,3 +1,18 @@
+/**
+ * Konfigurasi Axios API Client
+ * =============================
+ * Mengatur instance axios dengan base URL, interceptor autentikasi,
+ * dan penanganan refresh JWT token secara otomatis.
+ * 
+ * Fitur:
+ * - Otomatis menambahkan JWT access token ke semua request
+ * - Menangani error 401 dengan me-refresh token yang expired
+ * - Mengantri request selama proses refresh token
+ * - Auto-logout jika refresh token gagal
+ * 
+ * Environment Variables:
+ * - VITE_API_URL: Base URL backend API
+ */
 import axios from "axios";
 
 const api = axios.create({

@@ -1,3 +1,22 @@
+/**
+ * Cart Context
+ * =============
+ * Menyediakan manajemen state keranjang belanja global untuk user yang login.
+ * 
+ * State:
+ * - cart: Data keranjang saat ini (cartId, items array, totalItems, grandTotal)
+ * - loading: Status loading selama operasi keranjang
+ * 
+ * Method:
+ * - addItem: Tambah produk ke keranjang
+ * - updateQuantity: Update jumlah item keranjang berdasarkan cartItemId
+ * - removeItem: Hapus item dari keranjang berdasarkan cartItemId
+ * - refreshCart: Muat ulang keranjang dari server
+ * - clearCart: Kosongkan keranjang
+ * 
+ * Penggunaan: Bungkus app dengan CartProvider, gunakan hook useCart() untuk akses state/method
+ * Catatan: Keranjang otomatis dimuat saat user login dan dikosongkan saat logout
+ */
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { cartService } from "@/services/cartService";

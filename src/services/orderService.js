@@ -1,3 +1,15 @@
+/**
+ * Order Service
+ * ==============
+ * Menangani API call terkait pesanan untuk user yang login.
+ * 
+ * Method:
+ * - createOrder: Buat pesanan baru dari checkout (terintegrasi dengan pembayaran Xendit)
+ * - getMyOrders: Ambil riwayat pesanan user
+ * - getOrderDetail: Ambil detail pesanan tertentu
+ * - confirmDelivery: Tandai pesanan sudah diterima oleh pelanggan
+ * - cancelOrder: Batalkan pesanan yang menunggu pembayaran
+ */
 import api from "@/lib/axios";
 
 export const orderService = {

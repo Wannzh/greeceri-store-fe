@@ -1,5 +1,13 @@
 /**
- * Simple CSV helpers for client-side export (no external deps)
+ * CSV Helper
+ * ===========
+ * Helper untuk export data ke format CSV tanpa library eksternal.
+ * 
+ * Method:
+ * - escapeCsvValue: Escape value untuk format CSV
+ * - buildCsv: Bangun string CSV dari array data
+ * - downloadCsv: Download string CSV sebagai file
+ * - exportObjectsToCsv: Export array object ke file CSV
  */
 
 export function escapeCsvValue(v) {
@@ -21,16 +29,16 @@ export function buildCsv(rows = [], headers = []) {
   return lines.join("\n");
 }
 
+// Download menggunakan data URL
 export function downloadCsv(content, filename = `export-${new Date().toISOString()}.csv`) {
-  const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  const encodedContent = encodeURIComponent(content);
+  const dataUrl = `data:text/csv;charset=utf-8,${encodedContent}`;
+  
+  // window.open untuk trigger download
+  const newWindow = window.open(dataUrl, '_blank');
+  if (newWindow) {
+    newWindow.document.title = filename;
+  }
 }
 
 export function exportObjectsToCsv(rows = [], columns = [], filename) {
