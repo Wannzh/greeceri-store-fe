@@ -24,7 +24,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [wishlistCount, setWishlistCount] = useState(0);
 
   // Fetch wishlist count on auth change or location change
   useEffect(() => {
