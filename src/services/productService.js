@@ -1,13 +1,18 @@
 import api from "@/lib/axios";
 
 export const productService = {
-  getAll: async (categoryId) => {
-    const params = {};
+  getAll: async ({ page = 0, size = 12, categoryId = null, keyword = "" } = {}) => {
+    const params = { page, size };
+    
     if (categoryId) {
       params.categoryId = categoryId;
     }
+    if (keyword && keyword.trim() !== "") {
+      params.keyword = keyword.trim();
+    }
+    
     const res = await api.get("/products", { params });
-    return res.data.data;
+    return res.data.data; // Returns { content, totalElements, totalPages, size, number }
   },
 
   getById: async (id) => {

@@ -218,7 +218,7 @@ export default function AdminProductListPage() {
 
             <div className="flex items-center gap-2">
               <Select value={String(size)} onValueChange={(v) => { setSize(Number(v)); setPage(1); }}>
-                <SelectTrigger className="w-28">
+                <SelectTrigger className="w-30">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

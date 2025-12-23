@@ -42,14 +42,14 @@ function HeroSection() {
                 <Link to="/about">Tentang Kami</Link>
               </Button>
             </div>
-            
+
             <div className="pt-6 flex items-center justify-center lg:justify-start gap-6 text-sm text-gray-500 font-medium">
-                <div className="flex items-center gap-2">
-                    <div className="p-1 rounded-full bg-green-100 text-green-700"><Leaf size={14} /></div> 100% Organik
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="p-1 rounded-full bg-green-100 text-green-700"><Truck size={14} /></div> Kirim Hari Ini
-                </div>
+              <div className="flex items-center gap-2">
+                <div className="p-1 rounded-full bg-green-100 text-green-700"><Leaf size={14} /></div> 100% Organik
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-1 rounded-full bg-green-100 text-green-700"><Truck size={14} /></div> Kirim Hari Ini
+              </div>
             </div>
           </div>
 
@@ -62,12 +62,12 @@ function HeroSection() {
                 className="rounded-[2rem] object-cover w-full h-[400px] md:h-[500px] shadow-inner"
               />
             </div>
-            
+
             {/* Dekorasi Floating Card */}
             <div className="absolute -bottom-8 -left-8 md:bottom-12 md:-left-12 bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-white/50 animate-bounce duration-[3000ms]">
               <div className="flex items-center gap-4">
                 <div className="bg-yellow-100 p-3 rounded-full text-yellow-600">
-                    <Star className="fill-yellow-500 text-yellow-500 h-6 w-6" />
+                  <Star className="fill-yellow-500 text-yellow-500 h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-xl font-bold text-gray-900">4.9/5</p>
@@ -185,11 +185,11 @@ function CategorySection() {
     <section className="container mx-auto px-4 md:px-6 py-12">
       <div className="flex items-end justify-between mb-10">
         <div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">Kategori Pilihan</h2>
-            <p className="mt-2 text-gray-500">Temukan apa yang dapur Anda butuhkan hari ini</p>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">Kategori Pilihan</h2>
+          <p className="mt-2 text-gray-500">Temukan apa yang dapur Anda butuhkan hari ini</p>
         </div>
         <Link to="/products" className="hidden md:flex items-center text-primary font-semibold hover:underline">
-            Lihat Semua <ArrowRight className="ml-2 h-4 w-4" />
+          Lihat Semua <ArrowRight className="ml-2 h-4 w-4" />
         </Link>
       </div>
 
@@ -206,7 +206,7 @@ function CategorySection() {
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
-            
+
             <div className="absolute bottom-0 left-0 right-0 p-5 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform">
               <h3 className="font-bold text-lg leading-tight mb-1">{cat.name}</h3>
               <p className="text-xs text-white/80 font-medium bg-white/20 inline-block px-2 py-1 rounded-full backdrop-blur-sm">
@@ -216,11 +216,11 @@ function CategorySection() {
           </Link>
         ))}
       </div>
-       <div className="mt-6 text-center md:hidden">
-         <Link to="/products" className="inline-flex items-center text-primary font-semibold">
-            Lihat Semua Kategori <ArrowRight className="ml-2 h-4 w-4" />
+      <div className="mt-6 text-center md:hidden">
+        <Link to="/products" className="inline-flex items-center text-primary font-semibold">
+          Lihat Semua Kategori <ArrowRight className="ml-2 h-4 w-4" />
         </Link>
-       </div>
+      </div>
     </section>
   );
 }
@@ -233,9 +233,11 @@ function FeaturedProducts() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const res = await api.get("/products");
+        const res = await api.get("/products", { params: { page: 0, size: 4 } });
         if (res.data.success) {
-          setProducts(res.data.data.slice(0, 4));
+          // Handle paginated response - content is the array
+          const data = res.data.data;
+          setProducts(data.content || data.slice?.(0, 4) || []);
         }
       } catch (err) {
         console.error("Gagal memuat produk unggulan", err);
@@ -254,12 +256,12 @@ function FeaturedProducts() {
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Produk Terlaris Minggu Ini</h2>
             <p className="mt-2 text-gray-500 max-w-xl">
-                Jangan sampai kehabisan stok favorit pelanggan kami. Kualitas terbaik dengan harga spesial.
+              Jangan sampai kehabisan stok favorit pelanggan kami. Kualitas terbaik dengan harga spesial.
             </p>
           </div>
           <Link to="/products">
             <Button variant="outline" className="rounded-full border-gray-300 hover:border-primary hover:text-primary">
-                Lihat Katalog Lengkap
+              Lihat Katalog Lengkap
             </Button>
           </Link>
         </div>
@@ -271,8 +273,8 @@ function FeaturedProducts() {
               <div key={i} className="space-y-4 rounded-3xl bg-white p-4 shadow-sm">
                 <div className="aspect-square w-full animate-pulse rounded-2xl bg-gray-100" />
                 <div className="space-y-2">
-                    <div className="h-4 w-2/3 animate-pulse rounded bg-gray-100" />
-                    <div className="h-4 w-1/3 animate-pulse rounded bg-gray-100" />
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-gray-100" />
+                  <div className="h-4 w-1/3 animate-pulse rounded bg-gray-100" />
                 </div>
               </div>
             ))
@@ -297,9 +299,9 @@ function CTASection() {
     <section className="relative overflow-hidden py-24 lg:py-32">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-primary">
-         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-         <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-         <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-green-900/20 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+        <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-green-900/20 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container relative mx-auto px-4 md:px-6 text-center text-white space-y-8 max-w-4xl">

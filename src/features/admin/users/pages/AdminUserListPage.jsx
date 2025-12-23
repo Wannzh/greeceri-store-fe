@@ -152,7 +152,7 @@ export default function AdminUserListPage() {
                                         </Badge>
                                     </td>
                                     <td className="p-4 text-center">
-                                        {formatDate(u.createdAt || u.joinDate)}
+                                        {formatDate(u.joinedAt)}
                                     </td>
                                     <td className="p-4 text-center">
                                         {u.totalOrders ?? 0}
