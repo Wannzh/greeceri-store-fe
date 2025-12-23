@@ -14,6 +14,10 @@ import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import NotFound from "@/pages/NotFound";
 import AccessDenied from "@/pages/AccessDenied";
+import VerificationSuccessPage from "@/pages/VerificationSuccessPage";
+import VerificationFailurePage from "@/pages/VerificationFailurePage";
+import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
+import PaymentFailurePage from "@/pages/PaymentFailurePage";
 
 /* Auth */
 import LoginPage from "@/features/auth/pages/LoginPage";
@@ -73,6 +77,12 @@ export default function AppRouter() {
 
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<AboutPage />} />
+
+                {/* Verification & Payment Result Pages */}
+                <Route path="/verification-success" element={<VerificationSuccessPage />} />
+                <Route path="/verification-failure" element={<VerificationFailurePage />} />
+                <Route path="/payment-success" element={<PaymentSuccessPage />} />
+                <Route path="/payment-failure" element={<PaymentFailurePage />} />
 
                 {/* Product */}
                 <Route path="/products" element={<ProductListPage />} />
