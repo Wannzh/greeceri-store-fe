@@ -25,23 +25,6 @@ export default function Navbar() {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch wishlist count on auth change or location change
-  useEffect(() => {
-    const fetchWishlistCount = async () => {
-      if (isAuthenticated && user?.role !== "ADMIN") {
-        try {
-          const count = await wishlistService.getCount();
-          setWishlistCount(typeof count === 'number' ? count : 0);
-        } catch (err) {
-          setWishlistCount(0);
-        }
-      } else {
-        setWishlistCount(0);
-      }
-    };
-    fetchWishlistCount();
-  }, [isAuthenticated, user, location.pathname]);
-
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -196,12 +179,6 @@ export default function Navbar() {
                       </DropdownMenuItem>
                     </Link>
 
-                    <Link to="/user/addresses">
-                      <DropdownMenuItem className="cursor-pointer">
-                        <MapPin className="mr-2 h-4 w-4" /> Alamat Saya
-                      </DropdownMenuItem>
-                    </Link>
-
                     <DropdownMenuSeparator />
 
                     <DropdownMenuItem
@@ -300,9 +277,6 @@ export default function Navbar() {
                         </Link>
                         <Link to="/orders/my" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">
                           <Package size={18} /> Pesanan Saya
-                        </Link>
-                        <Link to="/user/addresses" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">
-                          <MapPin size={18} /> Alamat Saya
                         </Link>
                       </>
                     )}
