@@ -84,22 +84,22 @@ flowchart LR
     A[User] --> B{Has Account?}
     B -->|No| C[Register Page]
     B -->|Yes| D[Login Page]
-    
+
     C --> E[Fill Form]
     E --> F[Submit]
-    F --> G[API: POST /auth/register]
+    F --> G["API: POST /auth/register"]
     G --> H[Email Verification Sent]
     H --> I[Click Email Link]
     I --> J{Verification}
-    J -->|Success| K[/verification-success]
-    J -->|Failed| L[/verification-failure]
+    J -->|Success| K[Verification Success Page]
+    J -->|Failed| L[Verification Failed Page]
     K --> D
-    
+
     D --> M{Login Method}
-    M -->|Email/Password| N[API: POST /auth/login]
+    M -->|Email Password| N["API: POST /auth/login"]
     M -->|Google| O[Google OAuth]
-    O --> P[API: POST /auth/google]
-    
+    O --> P["API: POST /auth/google"]
+
     N --> Q{Role?}
     P --> Q
     Q -->|USER| R[Home Page]
@@ -113,26 +113,26 @@ flowchart LR
 ```mermaid
 flowchart TD
     A[Browse Products] --> B[Product List]
-    B --> C{Filter/Search}
+    B --> C{Filter or Search}
     C --> D[View Product Detail]
-    
+
     D --> E{User Action}
     E -->|Add to Cart| F[Cart Context Update]
     E -->|Add to Wishlist| G[Wishlist API]
-    
+
     F --> H[Cart Page]
     H --> I[Select Items]
     I --> J[Checkout Page]
-    
+
     J --> K[Select Address]
     K --> L[Review Order]
-    L --> M[API: POST /orders/checkout]
-    
+    L --> M["API: POST /orders/checkout"]
+
     M --> N[Xendit Payment Page]
     N --> O{Payment Result}
-    O -->|Success| P[/payment-success]
-    O -->|Failed| Q[/payment-failure]
-    
+    O -->|Success| P[Payment Success Page]
+    O -->|Failed| Q[Payment Failed Page]
+
     P --> R[Order Detail Page]
     Q --> H
 ```
@@ -146,13 +146,13 @@ flowchart LR
     subgraph User["User Side"]
         A[Order History] --> B[Order Detail]
         B --> C{Order Status}
-        C -->|PENDING_PAYMENT| D[Pay Now]
-        C -->|PENDING_PAYMENT| E[Cancel Order]
+        C -->|PENDING PAYMENT| D[Pay Now]
+        C -->|PENDING PAYMENT| E[Cancel Order]
         C -->|SHIPPED| F[Confirm Delivery]
         D --> G[Xendit Payment]
-        F --> H[Status: DELIVERED]
+        F --> H["Status: DELIVERED"]
     end
-    
+
     subgraph Admin["Admin Side"]
         I[Admin Orders] --> J[Order Detail]
         J --> K{Update Status}
@@ -170,43 +170,43 @@ flowchart LR
 ```mermaid
 flowchart TD
     subgraph Routes["Route Structure"]
-        ROOT["/"]
-        
+        ROOT["/ Root"]
+
         %% Public
         ROOT --> HOME[Home]
-        ROOT --> ABOUT[/about]
-        ROOT --> PRODUCTS[/products]
-        PRODUCTS --> PRODUCT_DETAIL[/products/:id]
-        
+        ROOT --> ABOUT[About]
+        ROOT --> PRODUCTS[Products]
+        PRODUCTS --> PRODUCT_DETAIL["Product Detail :id"]
+
         %% Auth
-        ROOT --> LOGIN[/login]
-        ROOT --> REGISTER[/register]
-        ROOT --> FORGOT[/forgot-password]
-        ROOT --> RESET[/reset-password]
-        ROOT --> VERIFY_OK[/verification-success]
-        ROOT --> VERIFY_FAIL[/verification-failure]
-        ROOT --> PAY_OK[/payment-success]
-        ROOT --> PAY_FAIL[/payment-failure]
-        
+        ROOT --> LOGIN[Login]
+        ROOT --> REGISTER[Register]
+        ROOT --> FORGOT[Forgot Password]
+        ROOT --> RESET[Reset Password]
+        ROOT --> VERIFY_OK[Verification Success]
+        ROOT --> VERIFY_FAIL[Verification Failure]
+        ROOT --> PAY_OK[Payment Success]
+        ROOT --> PAY_FAIL[Payment Failure]
+
         %% Protected User
-        ROOT --> CART[/cart]
-        ROOT --> CHECKOUT[/checkout]
-        ROOT --> ORDERS[/orders/my]
-        ORDERS --> ORDER_DETAIL[/orders/my/:id]
-        ROOT --> WISHLIST[/wishlist]
-        ROOT --> USER[/user]
-        USER --> PROFILE[/user/profile]
-        USER --> EDIT_PROFILE[/user/edit]
-        USER --> PASSWORD[/user/change-password]
-        USER --> ADDRESSES[/user/addresses]
-        
+        ROOT --> CART[Cart]
+        ROOT --> CHECKOUT[Checkout]
+        ROOT --> ORDERS[My Orders]
+        ORDERS --> ORDER_DETAIL["Order Detail :id"]
+        ROOT --> WISHLIST[Wishlist]
+        ROOT --> USER[User Profile]
+        USER --> PROFILE[View Profile]
+        USER --> EDIT_PROFILE[Edit Profile]
+        USER --> PASSWORD[Change Password]
+        USER --> ADDRESSES[Addresses]
+
         %% Admin
-        ROOT --> ADMIN[/admin]
+        ROOT --> ADMIN[Admin Panel]
         ADMIN --> ADMIN_DASH[Dashboard]
-        ADMIN --> ADMIN_PROD[/admin/products]
-        ADMIN --> ADMIN_CAT[/admin/categories]
-        ADMIN --> ADMIN_ORD[/admin/orders]
-        ADMIN --> ADMIN_USR[/admin/users]
+        ADMIN --> ADMIN_PROD[Admin Products]
+        ADMIN --> ADMIN_CAT[Admin Categories]
+        ADMIN --> ADMIN_ORD[Admin Orders]
+        ADMIN --> ADMIN_USR[Admin Users]
     end
 ```
 
@@ -220,21 +220,21 @@ flowchart TD
         AUTH[AuthContext]
         CART[CartContext]
     end
-    
+
     subgraph AuthState["Auth State"]
         USER[user]
         TOKEN[token]
         LOADING[loading]
     end
-    
+
     subgraph CartState["Cart State"]
-        ITEMS[cart.items]
+        ITEMS["cart.items"]
         TOTAL[grandTotal]
     end
-    
+
     AUTH --> AuthState
     CART --> CartState
-    
+
     subgraph Services["API Services"]
         AUTH_SVC[authService]
         PRODUCT_SVC[productService]
@@ -243,7 +243,7 @@ flowchart TD
         USER_SVC[userService]
         WISHLIST_SVC[wishlistService]
     end
-    
+
     Services --> API[Axios Instance]
     API --> BACKEND[Backend API]
 ```
@@ -254,20 +254,20 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    APP[App.jsx]
+    APP["App.jsx"]
     APP --> ROUTER[AppRouter]
-    
+
     ROUTER --> APP_LAYOUT[AppLayout]
     ROUTER --> ADMIN_LAYOUT[AdminLayout]
-    
+
     APP_LAYOUT --> NAVBAR[Navbar]
     APP_LAYOUT --> FOOTER[Footer]
     APP_LAYOUT --> PAGE_CONTENT[Page Content]
-    
+
     ADMIN_LAYOUT --> ADMIN_NAV[AdminNavbar]
     ADMIN_LAYOUT --> ADMIN_SIDE[AdminSidebar]
     ADMIN_LAYOUT --> ADMIN_CONTENT[Admin Content]
-    
+
     subgraph Shared["Shared Components"]
         BUTTON[Button]
         INPUT[Input]
