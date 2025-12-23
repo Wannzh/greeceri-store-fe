@@ -158,7 +158,7 @@ export default function ProfilePage() {
                                 />
                                 <InfoItem 
                                     label="Member Sejak" 
-                                    value={formatMemberSince(profile.createdAt)} 
+                                    value={formatMemberSince(profile.joinedAt)} 
                                     icon={<Calendar size={16} />} 
                                 />
                             </div>
