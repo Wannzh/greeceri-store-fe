@@ -320,9 +320,9 @@ export default function RegisterPage() {
                     {/* Footer */}
                     <div className="text-center text-sm text-muted-foreground">
                         Sudah punya akun?{" "}
-                        <a href="/login" className="font-semibold text-primary hover:underline underline-offset-4">
+                        <Link to="/login" className="font-semibold text-primary hover:underline underline-offset-4">
                             Masuk disini
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

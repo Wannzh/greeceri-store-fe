@@ -197,9 +197,9 @@ export default function LoginPage() {
                     {/* Footer Kecil */}
                     <p className="px-8 text-center text-sm text-muted-foreground">
                         Belum memiliki akun?{" "}
-                        <a href="/register" className="underline underline-offset-4 hover:text-primary font-medium">
+                        <Link to="/register" className="underline underline-offset-4 hover:text-primary font-medium">
                             Daftar sekarang
-                        </a>
+                        </Link>
                     </p>
 
                     <div className="mt-8 text-center text-xs text-muted-foreground/60">
