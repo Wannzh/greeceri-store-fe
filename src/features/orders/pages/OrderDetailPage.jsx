@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { orderService } from "@/services/orderService";
 import { DELIVERY_SLOT_LABELS } from "@/services/shippingService";
@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 export default function OrderDetailPage() {
     const { orderId } = useParams();
+    const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [confirming, setConfirming] = useState(false);
@@ -136,10 +137,13 @@ export default function OrderDetailPage() {
 
                 {/* Header Navigasi */}
                 <div className="mb-6">
-                    <Link to="/orders/my" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-primary transition-colors">
+                    <button
+                        onClick={() => navigate('/orders/my', { replace: true })}
+                        className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+                    >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Kembali ke Pesanan Saya
-                    </Link>
+                    </button>
                 </div>
 
                 {/* Header Order */}

@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
-import { MapPin, Calendar, Clock, Truck, AlertCircle, Loader2, ChevronDown } from "lucide-react";
+import { MapPin, Calendar, Clock, Truck, AlertCircle, Loader2, ChevronDown, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
@@ -205,7 +205,17 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto max-w-8xl p-6 space-y-8 pb-24">
-      <h1 className="text-2xl font-bold">Pengiriman & Pembayaran</h1>
+      <div className="flex items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate('/cart')}
+          className="hover:bg-gray-200"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-2xl font-bold">Pengiriman & Pembayaran</h1>
+      </div>
 
       <div className="grid md:grid-cols-12 gap-6 lg:gap-8">
         {/* KOLOM KIRI: ALAMAT, JADWAL & ITEM */}

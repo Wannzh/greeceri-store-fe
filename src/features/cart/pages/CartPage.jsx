@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function CartPage() {
+  const navigate = useNavigate();
   // Menggunakan Context (yang sekarang memanggil Service)
   const { cart, updateQuantity, removeItem, loading } = useCart();
 
@@ -142,9 +143,17 @@ export default function CartPage() {
     <div className="min-h-screen bg-white pb-32 pt-8">
       <div className="container mx-auto max-w-6xl px-4 md:px-6">
 
-        {/* Header Select All - Matching Image Style */}
+        {/* Header with Back Button */}
         <div className="mb-8 flex items-center justify-between border-b border-gray-100 pb-6">
           <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/products')}
+              className="hover:bg-gray-200"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
             {/* Custom Checkbox */}
             <div className="relative flex items-center justify-center">
               <input

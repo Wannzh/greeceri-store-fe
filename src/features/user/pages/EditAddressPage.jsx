@@ -308,7 +308,7 @@ export default function EditAddressPage() {
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-blue-600" />
                 <span className="font-medium text-gray-900">Koordinat Lokasi</span>
-                <span className="text-xs text-gray-500">(Opsional)</span>
+                <span className="text-red-500">*</span>
               </div>
               <Button
                 type="button"

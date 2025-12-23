@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { addressService } from "@/services/addressService";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, Trash2, Star } from "lucide-react";
+import { MapPin, Plus, Trash2, Star, ArrowLeft } from "lucide-react";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import toast from "react-hot-toast";
 
 
 export default function AddressListPage() {
+    const navigate = useNavigate();
     const [addresses, setAddresses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadingId, setLoadingId] = useState(null);
@@ -60,7 +61,17 @@ export default function AddressListPage() {
 
                 {/* HEADER */}
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Alamat Saya</h1>
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate('/user/profile')}
+                            className="hover:bg-gray-200"
+                        >
+                            <ArrowLeft className="h-5 w-5" />
+                        </Button>
+                        <h1 className="text-2xl font-bold">Alamat Saya</h1>
+                    </div>
                     <Link to="/user/addresses/new">
                         <Button className="flex items-center gap-2">
                             <Plus className="h-4 w-4" /> Tambah Alamat

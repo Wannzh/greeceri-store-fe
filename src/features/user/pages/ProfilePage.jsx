@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { userService } from "@/services/userService";
 import { orderService } from "@/services/orderService";
 import { addressService } from "@/services/addressService";
 import { Button } from "@/components/ui/button";
 import {
     User, Mail, Phone, Calendar, UserCircle, MapPin, Edit,
-    ShoppingBag, Wallet, Lock, ChevronRight, LogOut
+    ShoppingBag, Wallet, Lock, ChevronRight, LogOut, ArrowLeft
 } from "lucide-react";
 
 export default function ProfilePage() {
+    const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
@@ -82,7 +83,15 @@ export default function ProfilePage() {
             <div className="container mx-auto max-w-5xl px-4 space-y-8">
 
                 {/* HEADLINE */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate('/')}
+                        className="hover:bg-gray-200"
+                    >
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
                     <h1 className="text-3xl font-bold text-gray-900">Akun Saya</h1>
                 </div>
 
