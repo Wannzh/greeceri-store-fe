@@ -123,18 +123,6 @@ export default function Navbar() {
             {/* Cart - Hidden for Admin */}
             {user?.role !== "ADMIN" && (
               <>
-                {/* Wishlist */}
-                <Link to="/wishlist" className="relative group">
-                  <Button variant="ghost" size="icon" className="relative hover:bg-gray-100 h-10 w-10">
-                    <Heart className="h-5 w-5 text-gray-700 group-hover:text-red-500 transition-colors" />
-                    {wishlistCount > 0 && (
-                      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-in zoom-in">
-                        {wishlistCount > 99 ? '99+' : wishlistCount}
-                      </span>
-                    )}
-                  </Button>
-                </Link>
-
                 {/* Cart */}
                 <Link to="/cart" className="relative group">
                   <Button variant="ghost" size="icon" className="relative hover:bg-gray-100 h-10 w-10">
@@ -194,6 +182,17 @@ export default function Navbar() {
                     <Link to="/user/profile">
                       <DropdownMenuItem className="cursor-pointer">
                         <User className="mr-2 h-4 w-4" /> Profil Saya
+                      </DropdownMenuItem>
+                    </Link>
+
+                    <Link to="/wishlist">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Heart className="mr-2 h-4 w-4" /> Wishlist
+                        {wishlistCount > 0 && (
+                          <span className="ml-auto text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                            {wishlistCount > 99 ? '99+' : wishlistCount}
+                          </span>
+                        )}
                       </DropdownMenuItem>
                     </Link>
 
