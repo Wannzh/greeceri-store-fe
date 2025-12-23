@@ -193,28 +193,28 @@ export default function AdminDashboard() {
 
       {/* STATS - 6 Cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard label="Total Orders" value={filteredStats.totalOrders} icon={ShoppingCart} />
+        <StatCard label="Total Pesanan" value={filteredStats.totalOrders} icon={ShoppingCart} />
         <StatCard
-          label="Total Revenue"
+          label="Total Pendapatan"
           value={`Rp ${filteredStats.totalRevenue.toLocaleString("id-ID")}`}
           icon={DollarSign}
         />
-        <StatCard label="Paid Orders" value={filteredStats.paidOrders} icon={TrendingUp} />
-        <StatCard label="Cancelled Orders" value={filteredStats.cancelledOrders} icon={Tags} />
-        <StatCard label="Total Products" value={data.totalProducts || 0} icon={Package} />
-        <StatCard label="Total Categories" value={data.totalCategories || 0} icon={Tags} />
+        <StatCard label="Pesanan Terbayar" value={filteredStats.paidOrders} icon={TrendingUp} />
+        <StatCard label="Pesanan Dibatalkan" value={filteredStats.cancelledOrders} icon={Tags} />
+        <StatCard label="Total Produk" value={data.totalProducts || 0} icon={Package} />
+        <StatCard label="Total Kategori" value={data.totalCategories || 0} icon={Tags} />
       </div>
 
       {/* CHARTS ROW 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Orders by Status */}
         <div className="bg-card rounded-xl border border-border shadow-sm p-4">
-          <h3 className="font-medium mb-3 text-foreground">Orders by Status</h3>
+          <h3 className="font-medium mb-3 text-foreground">Pesanan berdasarkan Status</h3>
           <div className="h-48 min-w-0">
             {loadingOrders ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Memuat...</div>
             ) : filteredOrders.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Tidak ada data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                       <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.status]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [value, "Orders"]} />
+                  <Tooltip formatter={(value) => [value, "Pesanan"]} />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -251,12 +251,12 @@ export default function AdminDashboard() {
 
         {/* Revenue per Month */}
         <div className="bg-card rounded-xl border border-border shadow-sm p-4">
-          <h3 className="font-medium mb-3 text-foreground">Revenue per Month</h3>
+          <h3 className="font-medium mb-3 text-foreground">Pendapatan per Bulan</h3>
           <div className="h-64 min-w-0">
             {loadingOrders ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Memuat...</div>
             ) : filteredOrders.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Tidak ada data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={getRevenueChartData(filteredOrders)} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -283,20 +283,20 @@ export default function AdminDashboard() {
         {/* Best Selling Products */}
         <div className="bg-card rounded-xl border border-border shadow-sm p-4">
           <h3 className="font-medium mb-3 flex items-center gap-2 text-foreground">
-            <Award className="h-4 w-4 text-yellow-500" /> Best Selling Products
+            <Award className="h-4 w-4 text-yellow-500" /> Produk Terlaris
           </h3>
           <div className="h-64 min-w-0">
             {loadingBestSellers ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Memuat...</div>
             ) : bestSellers.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Tidak ada data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={bestSellers} layout="vertical" margin={{ left: 80, right: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-border" />
                   <XAxis type="number" tickFormatter={(v) => formatCompactNumber(v)} tick={{ fill: 'currentColor' }} className="text-muted-foreground" />
                   <YAxis type="category" dataKey="productName" tick={{ fontSize: 11, fill: 'currentColor' }} width={80} className="text-muted-foreground" />
-                  <Tooltip formatter={(value) => [value, "Sold"]} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
+                  <Tooltip formatter={(value) => [value, "Terjual"]} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
                   <Bar dataKey="totalSold" fill="#10B981" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -307,22 +307,22 @@ export default function AdminDashboard() {
         {/* User Growth */}
         <div className="bg-card rounded-xl border border-border shadow-sm p-4">
           <h3 className="font-medium mb-3 flex items-center gap-2 text-foreground">
-            <Users className="h-4 w-4 text-blue-500" /> User Growth per Month
+            <Users className="h-4 w-4 text-blue-500" /> Pertumbuhan Pengguna per Bulan
           </h3>
           <div className="h-64 min-w-0">
             {loadingUserGrowth ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">Loading...</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Memuat...</div>
             ) : userGrowth.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-muted-foreground">No data</div>
+              <div className="flex h-full items-center justify-center text-muted-foreground">Tidak ada data</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={userGrowth} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip formatter={(value) => [value, "New Users"]} />
+                  <Tooltip formatter={(value) => [value, "Pengguna Baru"]} />
                   <Legend />
-                  <Line type="monotone" dataKey="count" name="Users" stroke="#8B5CF6" strokeWidth={2} dot />
+                  <Line type="monotone" dataKey="count" name="Pengguna" stroke="#8B5CF6" strokeWidth={2} dot />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -332,12 +332,12 @@ export default function AdminDashboard() {
 
       {/* RECENT ORDERS */}
       <div className="bg-card rounded-xl border border-border shadow-sm p-6">
-        <h2 className="font-semibold mb-4 text-foreground">Recent Orders</h2>
+        <h2 className="font-semibold mb-4 text-foreground">Pesanan Terbaru</h2>
         <table className="w-full text-sm">
           <thead className="bg-muted">
             <tr>
-              <th className="p-2 text-left text-muted-foreground">Order ID</th>
-              <th className="p-2 text-muted-foreground">User</th>
+              <th className="p-2 text-left text-muted-foreground">ID Pesanan</th>
+              <th className="p-2 text-muted-foreground">Pelanggan</th>
               <th className="p-2 text-muted-foreground">Total</th>
               <th className="p-2 text-muted-foreground">Status</th>
             </tr>

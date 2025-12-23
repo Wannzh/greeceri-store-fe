@@ -66,8 +66,8 @@ export default function Navbar() {
         <div className="container mx-auto px-6 py-2 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              Pengiriman ke seluruh Bandung
+              <MapPin className="h-3.5 w-3.5" />
+              Pengiriman ke Dakota dan sekitarnya (maks. 5 km)
             </span>
           </div>
           <div className="flex items-center gap-4">

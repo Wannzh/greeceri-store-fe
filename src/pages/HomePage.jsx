@@ -95,7 +95,7 @@ function FeatureSection() {
     {
       icon: <Truck className="h-8 w-8 text-white" />,
       title: "Pengiriman Cepat",
-      desc: "Pesan sebelum jam 12 siang, kami antar di hari yang sama dengan armada pendingin.",
+      desc: "Pesan sebelum jam 2 siang, kami antar di hari yang sama dengan armada pendingin.",
       color: "bg-blue-500",
     },
     {
