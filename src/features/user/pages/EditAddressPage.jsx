@@ -245,15 +245,21 @@ export default function EditAddressPage() {
                 value={form.phoneNumber}
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, '');
+                  let phone = val;
                   if (val.startsWith("0")) {
-                    handleChange("phoneNumber", val.substring(1));
-                  } else {
-                    handleChange("phoneNumber", val);
+                    phone = val.substring(1);
+                  }
+                  // Max 12 digits (without leading 0) for Indonesian numbers
+                  if (phone.length <= 12) {
+                    handleChange("phoneNumber", phone);
                   }
                 }}
+                placeholder="8xxxxxxxxx"
+                maxLength={12}
                 required
               />
             </div>
+            <p className="text-xs text-gray-500">Format: 8xxxxxxxxx (9-12 digit setelah +62)</p>
           </div>
 
           {/* Alamat Lengkap */}

@@ -73,22 +73,22 @@ export default function Footer() {
                         <h4 className="font-semibold text-gray-900 mb-4">Layanan Pelanggan</h4>
                         <ul className="space-y-3">
                             <li>
-                                <Link to="#" className="text-sm text-gray-600 hover:text-primary transition-colors">
+                                <Link to="/about" className="text-sm text-gray-600 hover:text-primary transition-colors">
                                     Tentang Kami
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-600 hover:text-primary transition-colors">
+                                <Link to="/not-found" className="text-sm text-gray-600 hover:text-primary transition-colors">
                                     Informasi Pengiriman
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-600 hover:text-primary transition-colors">
+                                <Link to="/not-found" className="text-sm text-gray-600 hover:text-primary transition-colors">
                                     Kebijakan Privasi
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-600 hover:text-primary transition-colors">
+                                <Link to="/not-found" className="text-sm text-gray-600 hover:text-primary transition-colors">
                                     Syarat & Ketentuan
                                 </Link>
                             </li>

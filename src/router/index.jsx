@@ -11,6 +11,7 @@ import UserOnlyRoute from "./UserOnlyRoute";
 
 /* Public Pages */
 import HomePage from "@/pages/HomePage";
+import AboutPage from "@/pages/AboutPage";
 import NotFound from "@/pages/NotFound";
 import AccessDenied from "@/pages/AccessDenied";
 
@@ -71,6 +72,7 @@ export default function AppRouter() {
             >
 
                 <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
 
                 {/* Product */}
                 <Route path="/products" element={<ProductListPage />} />

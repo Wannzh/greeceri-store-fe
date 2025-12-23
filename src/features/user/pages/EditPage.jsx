@@ -121,9 +121,18 @@ export default function EditProfilePage() {
             <Label>No. Telepon</Label>
             <Input
               value={form.phoneNumber}
-              onChange={(e) => handleChange("phoneNumber", e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, ''); // Only allow digits
+                if (val.length <= 13) {
+                  handleChange("phoneNumber", val);
+                }
+              }}
               placeholder="08xxxxxxxxxx"
+              maxLength={13}
+              pattern="^08[0-9]{8,11}$"
+              title="Format: 08xxxxxxxxxx (10-13 digit)"
             />
+            <p className="text-xs text-gray-500">Format: 08xxxxxxxxxx (10-13 digit)</p>
           </div>
 
           {/* Gender */}
